@@ -53,7 +53,7 @@ const arr = [];
 arr.push(1);
 arr.push(2);
 arr[0]; // 1
-``
+```
 
 ### Functions
 
@@ -98,6 +98,7 @@ if (a > b) {
 Mafiascript has only one keyword for loops, the `loop` keyword. All loop keyword have a timeout you can specify in the settings. 
 
 #### Condition
+
 ```
 loop (condition) {
   // Code
@@ -140,8 +141,6 @@ false //mutatable
 
 context.addObject("player"); // object name, mutatable
 context.addProperty("player", "name", "Google", false) // object name, key, value, mutatable
-
-
 ```
 
 In MS:
