@@ -46,6 +46,17 @@ obj.a++;
 obj["b"]--;
 ```
 
+Don't be fooled: Just because the object is defined via `const` doesn't mean it's properties are also immutable. To make all properties of an object immutable, use the `final` keyword before the object declaration:
+
+```
+const obj = final{
+     a: 1,
+    b: 2
+};
+obj.a++; // Error!
+```
+
+
 ### Arrays
 
 ```
@@ -141,6 +152,8 @@ false //mutatable
 
 context.addObject("player"); // object name, mutatable
 context.addProperty("player", "name", "Google", false) // object name, key, value, mutatable
+
+context.run("code");
 ```
 
 In MS:
@@ -152,4 +165,21 @@ add(1, 2); // 3
 
 player.name; // Google
 player.name = "SomeoneElse" // Error!
+```
+
+### Getting global variables from MScript
+
+```
+MSContext context = contextGen.generate();
+context.run("const add = (a, b) => a + b;");
+
+MSValue val = context.global.at("add");
+val.type; // The type of the variable (string, bool, number, null, array, object, function)
+val.value.raw; // The value of the variable if it's (string, bool, number)
+val.value.items; // The value of the variable if it's (array)
+val.value.props; // The value of the variable if it's an object
+val.value.call; // The value of the variable if it's a function
+
+
+val.value.call(std::vector { 1, 1 }); // MSValue(2);
 ```
