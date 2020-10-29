@@ -1,0 +1,5 @@
+D:/Programs/other/mafiascript/dist/CMakeFiles/INSTALL.dir
+D:/Programs/other/mafiascript/dist/CMakeFiles/ALL_BUILD.dir
+D:/Programs/other/mafiascript/dist/CMakeFiles/ZERO_CHECK.dir
+D:/Programs/other/mafiascript/dist/src/CMakeFiles/Mafiascript.dir
+D:/Programs/other/mafiascript/dist/src/CMakeFiles/INSTALL.dir
