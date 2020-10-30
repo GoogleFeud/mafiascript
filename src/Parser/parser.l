@@ -1,11 +1,14 @@
 %option noyywrap
 
 %{
+#include <iostream>
 #include "AST/statements.h"
 #include "parser.tab.h"
 #include <string>
 
 int lineNum = 1;
+
+
 %}
 
 STRING \"([^\\\"]|\\.)*\"
@@ -18,22 +21,29 @@ THEN "=>"
 
 
 %%
-"if" {return IF; };
-"else" {return ELSE; };
-"return" {return RETURN; };
-"loop" {return LOOP; };
-"let" {return LET; };
-"const" {return CONST; };
-"continue" {return CONTINUE; };
-"typeof" {return TYPEOF; };
+"if" return IF;
+"else" return ELSE;
+"return" return RETURN;
+"loop" return LOOP;
+"let" return LET;
+"const" return CONST;
+"continue" return CONTINUE;
+"typeof" return TYPEOF;
 
 
-{NUMBER} { yylval.exp = new AST_EXPRESSION { new AST_Number(atof(yytext)) }; return NUMBER; }
-{BOOL} {yylval.exp = new AST_EXPRESSION { (yytext == "true") ? new AST_Bool(true):new AST_Bool(false) }; return BOOL; }
-{NULL} {yylval.exp = new AST_EXPRESSION { new AST_Null }; return _NULL; }
-{ID} { std::string res = std::string { yytext }; yylval.exp = new AST_EXPRESSION {new AST_Var(res) }; return ID; }
-{STRING} {std::string res = std::string { yytext }; yylval.exp = new AST_EXPRESSION { new AST_String(res) }; return STRING; }
+{NUMBER} { yylval.node = new AST_NODE { new AST_Number(atof(yytext)) }; return NUMBER; }
+{BOOL} {yylval.node = new AST_NODE { (yytext == "true") ? new AST_Bool(true):new AST_Bool(false) }; return BOOL; }
+{NULL} {yylval.node = new AST_NODE { new AST_Null }; return _NULL; }
+{ID} { std::string res = std::string { yytext }; yylval.node = new AST_NODE {new AST_Var(res) }; return ID; }
+{STRING} {
+    std::string res = std::string(yytext); 
+    yylval.node = new AST_NODE { new AST_String(res) };
+    return STRING; 
+    }
 
+"=" return ASSIGN;
+"==" return COMPARE;
+"!" return NOT;
 "+" return PLUS;
 "-" return MINUS;
 "*" return TIMES;

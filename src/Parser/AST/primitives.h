@@ -7,9 +7,8 @@
 
 class AST_String {
     public:
-    std::string& value;
-    AST_String(std::string& val) : value(val) {
-    };
+    std::string value;
+    AST_String(std::string& val) : value(val) {};
 };
 
 class AST_Number  {
@@ -30,20 +29,20 @@ class AST_Bool {
 
 class AST_Array {
     public:
-    std::vector<AST_EXPRESSION> entries;
+    std::vector<AST_NODE> entries;
     AST_Array() {};
-    AST_Array(AST_EXPRESSION &exp) {
+    AST_Array(AST_NODE &exp) {
         this->entries.push_back(exp);
     };
 
-    void push(AST_EXPRESSION &exp) {
+    void push(AST_NODE &exp) {
         this->entries.push_back(exp);
     }
 };
 
 class AST_Object {
     public:
-    std::unordered_map<std::string, AST_EXPRESSION> entries;
+    std::unordered_map<std::string, AST_NODE> entries;
 
 };
 

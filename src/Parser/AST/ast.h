@@ -34,6 +34,8 @@ enum AST_Types {
     MS_FUNCTION,
     MS_CALL,
     MS_TERNERY,
+    MS_NOT,
+    MS_COMPARE,
     MS_IF,
     MS_LOOP,
     MS_RETURN,
@@ -59,24 +61,29 @@ class AST_If;
 class AST_Loop;
 class AST_Return;
 class AST_Continue;
+class AST_Not;
+class AST_Compare;
 
-using AST_ANY = std::variant<AST_String*, AST_Number*, AST_Bool*, AST_Null*, AST_Array*, AST_Object*, AST_Var*, AST_Binary*, AST_Assign*, AST_Function*, AST_Call*, AST_Ternery*, AST_If*, AST_Loop*, AST_Return*, AST_Continue*, AST_Block*>;
-using AST_EXPRESSION = std::variant<AST_String*, AST_Number*, AST_Bool*, AST_Null*, AST_Array*, AST_Object*, AST_Var*, AST_Binary*, AST_Assign*, AST_Function*, AST_Call*, AST_Ternery*>;
+using AST_NODE = std::variant<AST_String*, AST_Number*, AST_Bool*, AST_Null*, AST_Array*, AST_Object*, AST_Var*, AST_Binary*, AST_Assign*, AST_Function*, AST_Call*, AST_Ternery*, AST_Not*, AST_Compare*, AST_If*, AST_Loop*, AST_Return*, AST_Continue*, AST_Block*>;
+//using AST_EXPRESSION = std::variant<AST_String*, AST_Number*, AST_Bool*, AST_Null*, AST_Array*, AST_Object*, AST_Var*, AST_Binary*, AST_Assign*, AST_Function*, AST_Call*, AST_Ternery*>;
 
 template <typename T>
-T downcast(AST_EXPRESSION &exp) {
+T downcast(AST_NODE &exp) {
     return std::get<T>(exp);
 };
 
 template <typename T>
-T downcast(AST_ANY *&exp) {
+T downcast(AST_NODE *&exp) {
     return std::get<T>(*exp);
 };
 
-AST_ANY* expressionToAny(AST_EXPRESSION *exp) {
-    AST_ANY *e = std::visit([](auto &&arg) -> AST_ANY * {
-        return new AST_ANY{arg};
-    }, *exp);
-    delete exp;
-    return e;
-}
+
+template <typename T>
+T downcastDestroy(AST_NODE &exp) {
+    return std::get<T>(exp);
+};
+
+template <typename T>
+T downcastDestroy(AST_NODE *exp) {
+    return std::get<T>(*exp);
+};

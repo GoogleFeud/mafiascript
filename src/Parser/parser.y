@@ -10,16 +10,18 @@ int yyerror (char const *s);
 extern int yylex (void);
 extern FILE *yyin;
 extern int lineNum;
+
+AST_Block* prog;
 %}
 
 %union{
-    AST_ANY* any; 
-    AST_EXPRESSION* exp;
+    AST_NODE* node;
+    AST_Block* block; 
 }
 
 %token STRING NUMBER ID BOOL _NULL
 %token IF ELSE RETURN LOOP LET CONST CONTINUE TYPEOF
-%token PLUS MINUS TIMES DIVIDE POWER
+%token PLUS MINUS TIMES DIVIDE POWER COMPARE NOT ASSIGN
 %token PARAN_LEFT PARAN_RIGHT PARAM_SEPARATOR BRACKET_LEFT BRACKET_RIGHT
 %token END_OF_LINE
 
@@ -28,25 +30,25 @@ extern int lineNum;
 %left NEG
 %right POWER
 
-%type <exp> NUMBER STRING ID BOOL _NULL
-%type <exp> Expression
-%type <any> Statement
-%type <any> Line
-%type <any> Block
+%type <node> NUMBER STRING ID BOOL _NULL
+%type <node> Expression
+%type <node> Statement
+%type <node> Line
+%type <node> Block
+%type <block> Input
 
 %define parse.error verbose
 %start Input
 %%
 
-Input: %empty 
-| Input Line { printf("Input code block!\n"); };
+Input: %empty { $$ = prog; }; 
+| Input Line { $$->push($2); };
 
-Line: %empty;
-| Expression END_OF_LINE { $$ = expressionToAny($1); };
+Line:  Expression END_OF_LINE { $$ = $1; };
 | Statement END_OF_LINE { $$ = $1; };
 
-Block: %empty { $$ = new AST_ANY { new AST_Block() }; };
-| Line { AST_Block* block = new AST_Block(); block->push($1); $$ = new AST_ANY {block}; }
+Block: %empty { $$ = new AST_NODE { new AST_Block }; };
+| Line { AST_Block* block = new AST_Block; block->push($1); $$ = new AST_NODE {block}; }
 | Block Line { downcast<AST_Block*>($$)->push($2); };
 
 Expression: NUMBER
@@ -54,16 +56,18 @@ Expression: NUMBER
 | ID
 | BOOL
 | _NULL
-| Expression PLUS Expression { std::string op = "+"; $$ = new AST_EXPRESSION { new AST_Binary($1, $3, op) };};
-| Expression MINUS Expression {std::string op = "-"; $$ = new AST_EXPRESSION { new AST_Binary($1, $3, op) };};
-| Expression TIMES Expression {std::string op = "*"; $$ = new AST_EXPRESSION { new AST_Binary($1, $3, op) };};
-| Expression DIVIDE Expression {std::string op = "/"; $$ = new AST_EXPRESSION { new AST_Binary($1, $3, op) };};
-| Expression POWER Expression {std::string op = "^"; $$ = new AST_EXPRESSION { new AST_Binary($1, $3, op) };};
+| Expression PLUS Expression { std::string op = "+"; $$ = new AST_NODE { new AST_Binary($1, $3, op) };};
+| Expression MINUS Expression {std::string op = "-"; $$ = new AST_NODE { new AST_Binary($1, $3, op) };};
+| Expression TIMES Expression {std::string op = "*"; $$ = new AST_NODE { new AST_Binary($1, $3, op) };};
+| Expression DIVIDE Expression {std::string op = "/"; $$ = new AST_NODE { new AST_Binary($1, $3, op) };};
+| Expression POWER Expression {std::string op = "^"; $$ = new AST_NODE { new AST_Binary($1, $3, op) };};
 | PARAN_LEFT Expression PARAN_RIGHT {$$ = $2; };
+| NOT Expression {$$ = new AST_NODE { new AST_Not($2) }; };
+| Expression COMPARE Expression {$$ = new AST_NODE { new AST_Compare($1, $3) }; };
 
-Statement: IF PARAN_LEFT Expression PARAN_RIGHT Block {
-    printf("If block!");
-}
+Statement: IF PARAN_LEFT Expression PARAN_RIGHT BRACKET_LEFT Block BRACKET_RIGHT { $$ = new AST_NODE { new AST_If($3, $6, NULL) }; };
+| IF PARAN_LEFT Expression PARAN_RIGHT Expression { $$ = new AST_NODE { new AST_If($3, new AST_NODE { new AST_Block($5) }, NULL) }; };
+
 
 %%
 
@@ -72,11 +76,13 @@ int yyerror(char const *s) {
   return 1;
 }
 
-void parse(FILE* content) {
+AST_Block* parse(FILE* content) {
+    prog = new AST_Block();
     yyin = content;
     int ret = yyparse();
     if (ret){
 	fprintf(stderr, "%d error found.\n",ret);
     }
+    return prog;
 }
 

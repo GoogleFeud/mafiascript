@@ -6,9 +6,9 @@ class AST_Assign {
     public:
     bool isConst;
     AST_Var* name;
-    AST_EXPRESSION value;
+    AST_NODE value;
 
-    AST_Assign(AST_Var* name, AST_EXPRESSION& value, bool isConst) : value(value) {
+    AST_Assign(AST_Var* name, AST_NODE& value, bool isConst) : value(value) {
         this->name = name;
         this->isConst = isConst;
     };
@@ -16,11 +16,11 @@ class AST_Assign {
 
 class AST_Binary {
     public:
-    AST_EXPRESSION* left;
-    AST_EXPRESSION* right;
+    AST_NODE* left;
+    AST_NODE* right;
     std::string op;
 
-    AST_Binary(AST_EXPRESSION *left, AST_EXPRESSION *right, std::string &op) : op(op) {
+    AST_Binary(AST_NODE *left, AST_NODE *right, std::string &op) : op(op) {
         this->left = left;
         this->right = right;
     };
@@ -39,20 +39,41 @@ class AST_Function {
 
 class AST_Call {
     public:
-    std::vector<AST_EXPRESSION> params;
+    std::vector<AST_NODE> params;
     AST_Var name;
 
-    AST_Call(std::vector<AST_EXPRESSION> &params, AST_Var& name) : params(params), name(name) {
+    AST_Call(std::vector<AST_NODE> &params, AST_Var& name) : params(params), name(name) {
     };
 
 };
 
 class AST_Ternery {
     public:
-    AST_EXPRESSION condition;
-    AST_EXPRESSION ifTrue;
-    AST_EXPRESSION ifFalse;
+    AST_NODE condition;
+    AST_NODE ifTrue;
+    AST_NODE ifFalse;
 
-    AST_Ternery(AST_EXPRESSION& cond, AST_EXPRESSION& ifTrue, AST_EXPRESSION& ifFalse) : condition(cond), ifTrue(ifTrue), ifFalse(ifFalse) {
+    AST_Ternery(AST_NODE& cond, AST_NODE& ifTrue, AST_NODE& ifFalse) : condition(cond), ifTrue(ifTrue), ifFalse(ifFalse) {
+    };
+};
+
+class AST_Not {
+    public:
+    AST_NODE* exp;
+
+    AST_Not(AST_NODE *exp) {
+        this->exp = exp;
+    };
+
+};
+
+class AST_Compare {
+    public:
+    AST_NODE* left;
+    AST_NODE* right;
+
+    AST_Compare(AST_NODE *left, AST_NODE *right) {
+        this->left = left;
+        this->right = right;
     };
 };

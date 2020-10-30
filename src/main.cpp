@@ -4,54 +4,29 @@
 #include <variant>
 #include "./Parser/AST/statements.h"
 
-extern int parse(FILE* file);
+#include <chrono> 
+using namespace std::chrono; 
+
+extern AST_Block* parse(FILE* file);
 
 int main() {
     FILE *myfile = fopen("script.ms", "r");
-    parse(myfile);
-  /**
-    std::string string = "Hello world!";
-    std::string op = "+";
-    AST_Array* arr = new AST_Array();
-    arr->push(AST_EXPRESSION { new AST_String(string) });
-    arr->push(AST_EXPRESSION { new AST_Number(112) });
-    arr->push(AST_EXPRESSION { new AST_Bool(true) });
-    AST_EXPRESSION someNum = AST_EXPRESSION { new AST_Number(5) };
-    arr->push(
-        AST_EXPRESSION {
-            new AST_Binary(
-                someNum,
-                AST_EXPRESSION { new AST_Number(10) },
-                op
-            )
-        }
-    );
-    for (AST_EXPRESSION element : arr->entries) {
-        switch(element.index()) {
-            case AST_Types::STRING: {
-                AST_String* el = downcast<AST_String*>(element);
-                std::cout<<"String: " + el->value<<std::endl; 
-                break;
-            };
-            case AST_Types::NUMBER: {
-                AST_Number* el = downcast<AST_Number*>(element);
-                std::cout<<"Number: " + std::to_string(el->value)<<std::endl;
-                break;
-            };
-            case AST_Types::BOOL: {
-                AST_Bool* el = downcast<AST_Bool*>(element);
-                std::cout<<"Bool: " + std::to_string(el->value)<<std::endl;
-                break;
-            }
-            case AST_Types::BINARY: {
-                AST_Binary* el = downcast<AST_Binary*>(element);
-                AST_Number* left = downcast<AST_Number*>(el->left);
-                AST_Number* right = downcast<AST_Number*>(el->right);
-                std::cout<<"Binary Operation: " + std::to_string(calc(left->value, right->value, el->op))<<std::endl;
-            }
-        }
+    auto start = high_resolution_clock::now(); 
+    AST_Block* res = parse(myfile);
+    auto stop = high_resolution_clock::now(); 
+    auto duration = duration_cast<microseconds>(stop - start); 
+    std::cout<<duration.count()<<" microseconds"<<std::endl;
+    std::cout<<res->nodes.size();
+    for (AST_NODE* block : res->nodes) {
+         if (block->index() == AST_Types::MS_IF) {
+             AST_If* bl = downcastDestroy<AST_If*>(block);
+             AST_Compare* condition = downcastDestroy<AST_Compare*>(bl->condition);
+             AST_String* left = downcastDestroy<AST_String*>(condition->left);
+             AST_String* right = downcastDestroy<AST_String*>(condition->right);
+             if (left->value == right->value) std::cout<<"Condition is true!";
+             else std::cout<<"Condition is false!"; 
+         }
     }
-    //arr->push(new AST_Ternery(new AST_Bool(true), new AST_Null, new AST_Null)); **/
     system("pause");
 }
 
