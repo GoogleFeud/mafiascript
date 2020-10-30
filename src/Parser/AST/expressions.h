@@ -1,5 +1,6 @@
 #pragma once
 #include "primitives.h"
+#include <vector>
 
 class AST_Assign {
     public:
@@ -15,11 +16,13 @@ class AST_Assign {
 
 class AST_Binary {
     public:
-    AST_EXPRESSION left;
-    AST_EXPRESSION right;
+    AST_EXPRESSION* left;
+    AST_EXPRESSION* right;
     std::string op;
 
-    AST_Binary(AST_EXPRESSION &left, AST_EXPRESSION &right, std::string &op) : left(left), right(right), op(op) {
+    AST_Binary(AST_EXPRESSION *left, AST_EXPRESSION *right, std::string &op) : op(op) {
+        this->left = left;
+        this->right = right;
     };
 
 };

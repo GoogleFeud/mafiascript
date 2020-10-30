@@ -1,6 +1,7 @@
 %option noyywrap
 
 %{
+#include "AST/statements.h"
 #include "parser.tab.h"
 #include <string>
 %}
@@ -15,29 +16,29 @@ THEN "=>"
 
 
 %%
+"if" {return IF; };
+"else" {return ELSE; };
+"return" {return RETURN; };
+"loop" {return LOOP; };
+"let" {return LET; };
+"const" {return CONST; };
+"continue" {return CONTINUE; };
+"typeof" {return TYPEOF; };
 
-{NUMBER} { yylval.number = atof(yytext); return NUMBER; }
-{ID} { yylval.id = yytext; return ID; }
-{STRING} {yylval.string = yytext; return STRING; }
-{BOOL} {yylval.boolean = (yytext == "true") ? true:false; return BOOL; }
-{NULL} {yylval.isNull = true; return NULL; }
 
-if {return IF; };
-else {return ELSE; };
-return {return RETURN; };
-loop {return LOOP; };
-let {return LET; };
-const {return CONST; };
-continue {return CONTINUE; };
-typeof {return TYPEOF; };
+{NUMBER} { yylval.exp = new AST_EXPRESSION { new AST_Number(atof(yytext)) }; return NUMBER; }
+{BOOL} {yylval.exp = new AST_EXPRESSION { (yytext == "true") ? new AST_Bool(true):new AST_Bool(false) }; return BOOL; }
+{NULL} {yylval.exp = new AST_EXPRESSION { new AST_Null }; return _NULL; }
+{ID} { std::string res = std::string { yytext }; yylval.exp = new AST_EXPRESSION {new AST_Var(res) }; return ID; }
+{STRING} {std::string res = std::string { yytext }; yylval.exp = new AST_EXPRESSION { new AST_String(res) }; return STRING; }
 
 "+" return PLUS;
 "-" return MINUS;
 "*" return TIMES;
 "/" return DIVIDE;
 "^" return POWER;
-"(" return LEFT;
-")" return RIGHT;
+"(" return PARAN_LEFT;
+")" return PARAN_RIGHT;
 "," return PARAM_SEPARATOR;
 
-"\n" return END;
+";" return END_OF_LINE;

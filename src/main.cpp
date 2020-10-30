@@ -2,33 +2,13 @@
 #include <iostream>
 #include <vector>
 #include <variant>
-#include "./Parser/AST/primitives.h"
-#include "./Parser/AST/expressions.h"
+#include "./Parser/AST/statements.h"
 
-
-float calc(float left, float right, std::string& op) {
-    if (op == "+") return left + right;
-    else if (op == "-") return left - right;
-    else if (op == "/") return left / right;
-    else if (op == "*") return left / right;
-};
+extern int parse();
 
 int main() {
-  /**  std::string string = "Hello world!";
-    std::vector<AST_Node*> vec;
-    AST_String* str = new AST_String(string);
-    AST_Number* num = new AST_Number(3.14);
-    vec.push_back(str);
-    vec.push_back(num);
-    for (AST_Node* node : vec) {
-        if (node->getType() == AST_Types::STRING) {
-            AST_String* typecast = (AST_String*) node;
-            std::cout<<typecast->getValue();
-        } else if (node->getType() == AST_Types::NUMBER) {
-            AST_Number* typecast = (AST_Number*) node;
-            std::cout<<typecast->getValue();
-        };
-    } **/
+    while(parse());
+  /**
     std::string string = "Hello world!";
     std::string op = "+";
     AST_Array* arr = new AST_Array();
@@ -70,7 +50,7 @@ int main() {
             }
         }
     }
-    //arr->push(new AST_Ternery(new AST_Bool(true), new AST_Null, new AST_Null));
+    //arr->push(new AST_Ternery(new AST_Bool(true), new AST_Null, new AST_Null)); **/
     system("pause");
 }
 

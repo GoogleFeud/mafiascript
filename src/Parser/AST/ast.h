@@ -22,23 +22,23 @@ enum AST_Types {
 */
 
 enum AST_Types {
-    STRING,
-    NUMBER,
-    BOOL,
+    MS_STRING,
+    MS_NUMBER,
+    MS_BOOL,
     MS_NULL,
-    ARRAY,
-    OBJECT,
-    VAR,
-    BINARY,
-    ASSIGN,
-    FUNCTION,
-    CALL,
-    TERNERY,
-    IF,
-    LOOP,
-    RETURN,
-    CONTINUE,
-    BLOCK
+    MS_ARRAY,
+    MS_OBJECT,
+    MS_VAR,
+    MS_BINARY,
+    MS_ASSIGN,
+    MS_FUNCTION,
+    MS_CALL,
+    MS_TERNERY,
+    MS_IF,
+    MS_LOOP,
+    MS_RETURN,
+    MS_CONTINUE,
+    MS_BLOCK
 };
 
 
@@ -64,6 +64,13 @@ using AST_ANY = std::variant<AST_String*, AST_Number*, AST_Bool*, AST_Null*, AST
 using AST_EXPRESSION = std::variant<AST_String*, AST_Number*, AST_Bool*, AST_Null*, AST_Array*, AST_Object*, AST_Var*, AST_Binary*, AST_Assign*, AST_Function*, AST_Call*, AST_Ternery*>;
 
 template <typename T>
-T downcast(AST_EXPRESSION exp) {
+T downcast(AST_EXPRESSION &exp) {
     return std::get<T>(exp);
 };
+
+template <typename T>
+AST_EXPRESSION anyToExpression(AST_ANY &exp) {
+    T val = std::get<T>(exp);
+    return AST_EXPRESSION { val };
+};
+

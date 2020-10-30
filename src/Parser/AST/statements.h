@@ -2,6 +2,7 @@
 
 #include <optional>
 #include "expressions.h"
+#include <vector>
 
 class AST_Block {
     public:
