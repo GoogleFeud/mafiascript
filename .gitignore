@@ -36,3 +36,4 @@ dist/
 src/Parser/parser.lex.c
 src/Parser/parser.tab.c 
 src/Parser/parser.tab.h
+test.js

@@ -3,16 +3,16 @@
 #include <vector>
 #include <variant>
 #include "./Parser/AST/statements.h"
+#include "./Parser/index.h"
 
 #include <chrono> 
 using namespace std::chrono; 
 
-extern AST_Block* parse(FILE* file);
 
 int main() {
-    FILE *myfile = fopen("script.ms", "r");
+    std::string code = "if (10 == 10) 1 + 1;";
     auto start = high_resolution_clock::now(); 
-    AST_Block* res = parse(myfile);
+    AST_Block* res = parse(code);
     auto stop = high_resolution_clock::now(); 
     auto duration = duration_cast<microseconds>(stop - start); 
     std::cout<<duration.count()<<" microseconds"<<std::endl;
@@ -21,12 +21,13 @@ int main() {
          if (block->index() == AST_Types::MS_IF) {
              AST_If* bl = downcastDestroy<AST_If*>(block);
              AST_Compare* condition = downcastDestroy<AST_Compare*>(bl->condition);
-             AST_String* left = downcastDestroy<AST_String*>(condition->left);
-             AST_String* right = downcastDestroy<AST_String*>(condition->right);
+             AST_Number* left = downcastDestroy<AST_Number*>(condition->left);
+             AST_Number* right = downcastDestroy<AST_Number*>(condition->right);
              if (left->value == right->value) std::cout<<"Condition is true!";
              else std::cout<<"Condition is false!"; 
          }
     }
+    destroy();
     system("pause");
 }
 

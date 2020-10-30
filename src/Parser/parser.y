@@ -8,6 +8,7 @@
 
 int yyerror (char const *s);
 extern int yylex (void);
+extern void setCode(std::string &code);
 extern FILE *yyin;
 extern int lineNum;
 
@@ -76,9 +77,9 @@ int yyerror(char const *s) {
   return 1;
 }
 
-AST_Block* parse(FILE* content) {
+AST_Block* parse(std::string &code) {
     prog = new AST_Block();
-    yyin = content;
+    setCode(code);
     int ret = yyparse();
     if (ret){
 	fprintf(stderr, "%d error found.\n",ret);

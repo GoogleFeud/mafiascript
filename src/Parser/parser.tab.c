@@ -77,12 +77,13 @@
 
 int yyerror (char const *s);
 extern int yylex (void);
+extern void setCode(std::string &code);
 extern FILE *yyin;
 extern int lineNum;
 
 AST_Block* prog;
 
-#line 86 "src/Parser/parser.tab.c"
+#line 87 "src/Parser/parser.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -517,9 +518,9 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int8 yyrline[] =
 {
-       0,    44,    44,    45,    47,    48,    50,    51,    52,    54,
-      55,    56,    57,    58,    59,    60,    61,    62,    63,    64,
-      65,    66,    68,    69
+       0,    45,    45,    46,    48,    49,    51,    52,    53,    55,
+      56,    57,    58,    59,    60,    61,    62,    63,    64,    65,
+      66,    67,    69,    70
 };
 #endif
 
@@ -1399,109 +1400,109 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* Input: %empty  */
-#line 44 "./src/Parser/parser.y"
+#line 45 "./src/Parser/parser.y"
               { (yyval.block) = prog; }
-#line 1405 "src/Parser/parser.tab.c"
+#line 1406 "src/Parser/parser.tab.c"
     break;
 
   case 3: /* Input: Input Line  */
-#line 45 "./src/Parser/parser.y"
+#line 46 "./src/Parser/parser.y"
              { (yyval.block)->push((yyvsp[0].node)); }
-#line 1411 "src/Parser/parser.tab.c"
+#line 1412 "src/Parser/parser.tab.c"
     break;
 
   case 4: /* Line: Expression END_OF_LINE  */
-#line 47 "./src/Parser/parser.y"
+#line 48 "./src/Parser/parser.y"
                               { (yyval.node) = (yyvsp[-1].node); }
-#line 1417 "src/Parser/parser.tab.c"
+#line 1418 "src/Parser/parser.tab.c"
     break;
 
   case 5: /* Line: Statement END_OF_LINE  */
-#line 48 "./src/Parser/parser.y"
+#line 49 "./src/Parser/parser.y"
                         { (yyval.node) = (yyvsp[-1].node); }
-#line 1423 "src/Parser/parser.tab.c"
+#line 1424 "src/Parser/parser.tab.c"
     break;
 
   case 6: /* Block: %empty  */
-#line 50 "./src/Parser/parser.y"
+#line 51 "./src/Parser/parser.y"
               { (yyval.node) = new AST_NODE { new AST_Block }; }
-#line 1429 "src/Parser/parser.tab.c"
+#line 1430 "src/Parser/parser.tab.c"
     break;
 
   case 7: /* Block: Line  */
-#line 51 "./src/Parser/parser.y"
+#line 52 "./src/Parser/parser.y"
        { AST_Block* block = new AST_Block; block->push((yyvsp[0].node)); (yyval.node) = new AST_NODE {block}; }
-#line 1435 "src/Parser/parser.tab.c"
+#line 1436 "src/Parser/parser.tab.c"
     break;
 
   case 8: /* Block: Block Line  */
-#line 52 "./src/Parser/parser.y"
+#line 53 "./src/Parser/parser.y"
              { downcast<AST_Block*>((yyval.node))->push((yyvsp[0].node)); }
-#line 1441 "src/Parser/parser.tab.c"
+#line 1442 "src/Parser/parser.tab.c"
     break;
 
   case 14: /* Expression: Expression PLUS Expression  */
-#line 59 "./src/Parser/parser.y"
+#line 60 "./src/Parser/parser.y"
                              { std::string op = "+"; (yyval.node) = new AST_NODE { new AST_Binary((yyvsp[-2].node), (yyvsp[0].node), op) };}
-#line 1447 "src/Parser/parser.tab.c"
+#line 1448 "src/Parser/parser.tab.c"
     break;
 
   case 15: /* Expression: Expression MINUS Expression  */
-#line 60 "./src/Parser/parser.y"
+#line 61 "./src/Parser/parser.y"
                               {std::string op = "-"; (yyval.node) = new AST_NODE { new AST_Binary((yyvsp[-2].node), (yyvsp[0].node), op) };}
-#line 1453 "src/Parser/parser.tab.c"
+#line 1454 "src/Parser/parser.tab.c"
     break;
 
   case 16: /* Expression: Expression TIMES Expression  */
-#line 61 "./src/Parser/parser.y"
+#line 62 "./src/Parser/parser.y"
                               {std::string op = "*"; (yyval.node) = new AST_NODE { new AST_Binary((yyvsp[-2].node), (yyvsp[0].node), op) };}
-#line 1459 "src/Parser/parser.tab.c"
+#line 1460 "src/Parser/parser.tab.c"
     break;
 
   case 17: /* Expression: Expression DIVIDE Expression  */
-#line 62 "./src/Parser/parser.y"
+#line 63 "./src/Parser/parser.y"
                                {std::string op = "/"; (yyval.node) = new AST_NODE { new AST_Binary((yyvsp[-2].node), (yyvsp[0].node), op) };}
-#line 1465 "src/Parser/parser.tab.c"
+#line 1466 "src/Parser/parser.tab.c"
     break;
 
   case 18: /* Expression: Expression POWER Expression  */
-#line 63 "./src/Parser/parser.y"
+#line 64 "./src/Parser/parser.y"
                               {std::string op = "^"; (yyval.node) = new AST_NODE { new AST_Binary((yyvsp[-2].node), (yyvsp[0].node), op) };}
-#line 1471 "src/Parser/parser.tab.c"
+#line 1472 "src/Parser/parser.tab.c"
     break;
 
   case 19: /* Expression: PARAN_LEFT Expression PARAN_RIGHT  */
-#line 64 "./src/Parser/parser.y"
+#line 65 "./src/Parser/parser.y"
                                     {(yyval.node) = (yyvsp[-1].node); }
-#line 1477 "src/Parser/parser.tab.c"
+#line 1478 "src/Parser/parser.tab.c"
     break;
 
   case 20: /* Expression: NOT Expression  */
-#line 65 "./src/Parser/parser.y"
+#line 66 "./src/Parser/parser.y"
                  {(yyval.node) = new AST_NODE { new AST_Not((yyvsp[0].node)) }; }
-#line 1483 "src/Parser/parser.tab.c"
+#line 1484 "src/Parser/parser.tab.c"
     break;
 
   case 21: /* Expression: Expression COMPARE Expression  */
-#line 66 "./src/Parser/parser.y"
+#line 67 "./src/Parser/parser.y"
                                 {(yyval.node) = new AST_NODE { new AST_Compare((yyvsp[-2].node), (yyvsp[0].node)) }; }
-#line 1489 "src/Parser/parser.tab.c"
+#line 1490 "src/Parser/parser.tab.c"
     break;
 
   case 22: /* Statement: IF PARAN_LEFT Expression PARAN_RIGHT BRACKET_LEFT Block BRACKET_RIGHT  */
-#line 68 "./src/Parser/parser.y"
+#line 69 "./src/Parser/parser.y"
                                                                                  { (yyval.node) = new AST_NODE { new AST_If((yyvsp[-4].node), (yyvsp[-1].node), NULL) }; }
-#line 1495 "src/Parser/parser.tab.c"
+#line 1496 "src/Parser/parser.tab.c"
     break;
 
   case 23: /* Statement: IF PARAN_LEFT Expression PARAN_RIGHT Expression  */
-#line 69 "./src/Parser/parser.y"
+#line 70 "./src/Parser/parser.y"
                                                   { (yyval.node) = new AST_NODE { new AST_If((yyvsp[-2].node), new AST_NODE { new AST_Block((yyvsp[0].node)) }, NULL) }; }
-#line 1501 "src/Parser/parser.tab.c"
+#line 1502 "src/Parser/parser.tab.c"
     break;
 
 
-#line 1505 "src/Parser/parser.tab.c"
+#line 1506 "src/Parser/parser.tab.c"
 
       default: break;
     }
@@ -1726,7 +1727,7 @@ yyreturn:
   return yyresult;
 }
 
-#line 72 "./src/Parser/parser.y"
+#line 73 "./src/Parser/parser.y"
 
 
 int yyerror(char const *s) {
@@ -1734,9 +1735,9 @@ int yyerror(char const *s) {
   return 1;
 }
 
-AST_Block* parse(FILE* content) {
+AST_Block* parse(std::string &code) {
     prog = new AST_Block();
-    yyin = content;
+    setCode(code);
     int ret = yyparse();
     if (ret){
 	fprintf(stderr, "%d error found.\n",ret);

@@ -8,7 +8,9 @@
 
 int lineNum = 1;
 
-
+void setCode(std::string &code) {
+    yy_scan_string(const_cast<char*>(code.c_str()));
+};
 %}
 
 STRING \"([^\\\"]|\\.)*\"
