@@ -75,8 +75,10 @@ extern int yydebug;
     PARAN_LEFT = 276,              /* PARAN_LEFT  */
     PARAN_RIGHT = 277,             /* PARAN_RIGHT  */
     PARAM_SEPARATOR = 278,         /* PARAM_SEPARATOR  */
-    END_OF_LINE = 279,             /* END_OF_LINE  */
-    NEG = 280                      /* NEG  */
+    BRACKET_LEFT = 279,            /* BRACKET_LEFT  */
+    BRACKET_RIGHT = 280,           /* BRACKET_RIGHT  */
+    END_OF_LINE = 281,             /* END_OF_LINE  */
+    NEG = 282                      /* NEG  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -85,12 +87,12 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 14 "./src/Parser/parser.y"
+#line 15 "./src/Parser/parser.y"
 
     AST_ANY* any; 
     AST_EXPRESSION* exp;
 
-#line 94 "src/Parser/parser.tab.h"
+#line 96 "src/Parser/parser.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

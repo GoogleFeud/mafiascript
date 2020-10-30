@@ -69,8 +69,14 @@ T downcast(AST_EXPRESSION &exp) {
 };
 
 template <typename T>
-AST_EXPRESSION anyToExpression(AST_ANY &exp) {
-    T val = std::get<T>(exp);
-    return AST_EXPRESSION { val };
+T downcast(AST_ANY *&exp) {
+    return std::get<T>(*exp);
 };
 
+AST_ANY* expressionToAny(AST_EXPRESSION *exp) {
+    AST_ANY *e = std::visit([](auto &&arg) -> AST_ANY * {
+        return new AST_ANY{arg};
+    }, *exp);
+    delete exp;
+    return e;
+}

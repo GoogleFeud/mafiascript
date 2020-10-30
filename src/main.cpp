@@ -4,10 +4,11 @@
 #include <variant>
 #include "./Parser/AST/statements.h"
 
-extern int parse();
+extern int parse(FILE* file);
 
 int main() {
-    while(parse());
+    FILE *myfile = fopen("script.ms", "r");
+    parse(myfile);
   /**
     std::string string = "Hello world!";
     std::string op = "+";

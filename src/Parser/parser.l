@@ -4,6 +4,8 @@
 #include "AST/statements.h"
 #include "parser.tab.h"
 #include <string>
+
+int lineNum = 1;
 %}
 
 STRING \"([^\\\"]|\\.)*\"
@@ -39,6 +41,10 @@ THEN "=>"
 "^" return POWER;
 "(" return PARAN_LEFT;
 ")" return PARAN_RIGHT;
+"{" return BRACKET_LEFT;
+"}" return BRACKET_RIGHT;
 "," return PARAM_SEPARATOR;
 
 ";" return END_OF_LINE;
+"\n" { ++lineNum; };
+%%

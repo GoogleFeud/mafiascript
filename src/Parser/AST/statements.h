@@ -6,21 +6,27 @@
 
 class AST_Block {
     public:
-    std::vector<AST_ANY> nodes;
+    std::vector<AST_ANY*> nodes;
     AST_Block();
-    AST_Block(AST_ANY &val) {
+    AST_Block(AST_ANY *val) {
         this->nodes.push_back(val);
     };
-    AST_Block(std::vector<AST_ANY> &nodes) : nodes(nodes) {};
+    AST_Block(std::vector<AST_ANY*> &nodes) : nodes(nodes) {};
+
+    void push(AST_ANY* node) {
+        this->nodes.push_back(node);
+    };
+    
 };
 
 class AST_If {
     public:
-    AST_EXPRESSION condition;
+    AST_EXPRESSION* condition;
     AST_Block* ifTrue;
     AST_Block* ifFalse;
 
-    AST_If(AST_EXPRESSION &cond, AST_Block *ifTrue, AST_Block *ifFalse) : condition(cond) {
+    AST_If(AST_EXPRESSION *cond, AST_Block *ifTrue, AST_Block *ifFalse) {
+        this->condition = cond;
         this->ifTrue = ifTrue;
         this->ifFalse = ifFalse;
     };
