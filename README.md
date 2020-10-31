@@ -173,13 +173,58 @@ player.name = "SomeoneElse" // Error!
 MSContext context = contextGen.generate();
 context.run("const add = (a, b) => a + b;");
 
-MSValue val = context.global.at("add");
-val.type; // The type of the variable (string, bool, number, null, array, object, function)
-val.value.raw; // The value of the variable if it's (string, bool, number)
-val.value.items; // The value of the variable if it's (array)
-val.value.props; // The value of the variable if it's an object
-val.value.call; // The value of the variable if it's a function
-
-
+MS_Value val = context.global.at("add");
+val.index(); // The type of the variable
+std::string realValue = downcast<std::string>(val); // Get the value of the object if it's string
+float realValue = downcast<float>(val); // Get the value if it's a number
+bool realValue = downcast<bool>(val); // Get the value if it's bool
+vector<MS_Value>* realValue = downcast<vector<MS_Value>*>(val); // Get the value if it's an array
+unordered_map<std::string, MS_Value>* realValue = downcast<unordered_map<std::string, MS_Value>*>(val) // Get if the value is an object
 val.value.call(std::vector { 1, 1 }); // MSValue(2);
 ```
+
+### Memory management & GC
+
+`Mafiascript` does NOT have a garbage collector. Once a value goes out of scope, it gets deleted.
+
+```
+{
+    let a = 100;
+    //You can access a here
+} // a gets deleted, memory freed
+```
+
+If you want to bring the value outside of the scope, if the value is simple (number, bool, null), it gets copied, if it's a string, an object, an array or a func, it gets passed as a reference.
+
+```
+let res;
+{
+  let a = 100;
+  res = a;
+} // a still gets deleted, res is 100
+```
+
+```
+let res;
+{
+    let a = {someValue: 1};
+    res = a; // a gets moved to res.
+    a.someValue; // fine
+    res.someValue; // fine
+} // the object a and res hold gets deleted
+res.someValue; //error
+```
+
+```
+const someObj = {someValue: 1};
+let res;
+{
+    let a = {someObj: someObj };
+    res = a.someObj; //fine
+    a.someObj.someValue; // fine
+} // a's object gets deleted
+res.someValue; // fine
+```
+
+
+
