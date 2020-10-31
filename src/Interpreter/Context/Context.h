@@ -33,6 +33,7 @@ class Context {
             };
             case AST_Types::MS_VAR: {
                 AST_Var* id = downcast<AST_Var*>(node);
+                std::cout<<id->value;
                 return env->get(id->value);
             };
             case AST_Types::MS_BINARY: {
@@ -44,26 +45,22 @@ class Context {
             case AST_Types::MS_IF: {
                 AST_If* ms_if = downcast<AST_If*>(node);
                 MS_VALUE cond = this->executeAST(ms_if->condition, env);
+                std::cout<<cond.index();
                 if (!isFalsey(cond)) {
-                    if (downcast<AST_Block*>(ms_if->ifTrue)->nodes.size() == 1) this->executeAST(ms_if->ifTrue, env);
-                    else {
                     Enviourment* newEnv = env->extend();
-                    this->executeAST(ms_if->ifTrue, newEnv);
+                    auto val = this->executeAST(ms_if->ifTrue, newEnv);
                     newEnv->clear();
-                    }
+                    return val;
                 } else if (ms_if->ifFalse) {
-                    if (downcast<AST_Block*>(ms_if->ifFalse)->nodes.size() == 1) this->executeAST(ms_if->ifFalse, env);
-                    else {
                     Enviourment* newEnv = env->extend();
-                    this->executeAST(ms_if->ifFalse, newEnv);
+                    auto val = this->executeAST(ms_if->ifFalse, newEnv);
                     newEnv->clear();
-                    }
+                    return val;
                 }
                 break;
             };
             case AST_Types::MS_BLOCK: {
                 AST_Block* block = downcast<AST_Block*>(node);
-                if (block->nodes.size() == 1) return this->executeAST(block->nodes[0], env);
                 for (AST_NODE* blockNode : block->nodes) {
                     if (blockNode->index() == AST_Types::MS_RETURN) {
                         AST_Return* ret = downcast<AST_Return*>(blockNode);

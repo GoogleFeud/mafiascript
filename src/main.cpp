@@ -8,8 +8,10 @@ using namespace std::chrono;
 
 
 int main() {
-    std::string code = "if (10 == 10) {return 50;};";
-    Context ctx;
+    std::string code = "return star;";
+    Context ctx = Context();
+    std::string star = "star";
+    ctx.global->set(star, MS_VALUE { std::make_shared<std::string>("Hello World!") });
     auto start = high_resolution_clock::now(); 
     MS_VALUE mafiascriptRes = ctx.run(code);
    // std::cout<<mafiascriptRes.index();

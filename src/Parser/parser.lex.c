@@ -827,7 +827,7 @@ YY_RULE_SETUP
 case 10:
 YY_RULE_SETUP
 #line 37 "./src/Parser/parser.l"
-{yylval.node = new AST_NODE { (yytext == "true") ? new AST_Bool(true):new AST_Bool(false) }; return BOOL; }
+{std::cout<<(yytext == "true") ? true:false; yylval.node = new AST_NODE { (yytext == "true") ? new AST_Bool(true):new AST_Bool(false) }; return BOOL; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
@@ -837,7 +837,7 @@ YY_RULE_SETUP
 case 12:
 YY_RULE_SETUP
 #line 39 "./src/Parser/parser.l"
-{ std::string res = std::string { yytext }; yylval.node = new AST_NODE {new AST_Var(res) }; return ID; }
+{ std::string res = std::string { yytext }; yylval.node = new AST_NODE { new AST_Var(res) }; return ID; }
 	YY_BREAK
 case 13:
 /* rule 13 can match eol */
