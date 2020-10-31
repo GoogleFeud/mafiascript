@@ -63,12 +63,12 @@ Expression: NUMBER
 | Expression DIVIDE Expression {std::string op = "/"; $$ = new AST_NODE { new AST_Binary($1, $3, op) };};
 | Expression POWER Expression {std::string op = "^"; $$ = new AST_NODE { new AST_Binary($1, $3, op) };};
 | PARAN_LEFT Expression PARAN_RIGHT {$$ = $2; };
-| NOT Expression {$$ = new AST_NODE { new AST_Not($2) }; };
-| Expression COMPARE Expression {$$ = new AST_NODE { new AST_Compare($1, $3) }; };
+| Expression COMPARE Expression {std::string op = "=="; $$ = new AST_NODE { new AST_Binary($1, $3, op) }; };
+| Expression NOT COMPARE Expression {std::string op = "!="; $$ = new AST_NODE { new AST_Binary($1, $4, op) }; };
 
 Statement: IF PARAN_LEFT Expression PARAN_RIGHT BRACKET_LEFT Block BRACKET_RIGHT { $$ = new AST_NODE { new AST_If($3, $6, NULL) }; };
 | IF PARAN_LEFT Expression PARAN_RIGHT Expression { $$ = new AST_NODE { new AST_If($3, new AST_NODE { new AST_Block($5) }, NULL) }; };
-
+| RETURN Expression { $$ = new AST_NODE { new AST_Return($2) }; };
 
 %%
 

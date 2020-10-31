@@ -56,24 +56,3 @@ class AST_Ternery {
     AST_Ternery(AST_NODE& cond, AST_NODE& ifTrue, AST_NODE& ifFalse) : condition(cond), ifTrue(ifTrue), ifFalse(ifFalse) {
     };
 };
-
-class AST_Not {
-    public:
-    AST_NODE* exp;
-
-    AST_Not(AST_NODE *exp) {
-        this->exp = exp;
-    };
-
-};
-
-class AST_Compare {
-    public:
-    AST_NODE* left;
-    AST_NODE* right;
-
-    AST_Compare(AST_NODE *left, AST_NODE *right) {
-        this->left = left;
-        this->right = right;
-    };
-};

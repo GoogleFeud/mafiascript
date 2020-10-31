@@ -9,6 +9,10 @@ class Enviourment {
         this->parent = parent;
     }
 
+    Enviourment* extend() {
+        return new Enviourment(this);
+    };
+
     MS_VALUE get(std::string &key) {
         if (this->values.count(key)) return this->values[key];
         if (this->parent) return this->parent->get(key);

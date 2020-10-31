@@ -504,12 +504,8 @@ int lineNum = 1;
 void setCode(std::string &code) {
     yy_scan_string(const_cast<char*>(code.c_str()));
 };
-
-void destroy() {
-    yylex_destroy();
-}
-#line 511 "src/Parser/parser.lex.c"
-#line 512 "src/Parser/parser.lex.c"
+#line 507 "src/Parser/parser.lex.c"
+#line 508 "src/Parser/parser.lex.c"
 
 #define INITIAL 0
 
@@ -726,9 +722,9 @@ YY_DECL
 		}
 
 	{
-#line 29 "./src/Parser/parser.l"
+#line 25 "./src/Parser/parser.l"
 
-#line 731 "src/Parser/parser.lex.c"
+#line 727 "src/Parser/parser.lex.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -785,68 +781,68 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 30 "./src/Parser/parser.l"
+#line 26 "./src/Parser/parser.l"
 return IF;
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 31 "./src/Parser/parser.l"
+#line 27 "./src/Parser/parser.l"
 return ELSE;
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 32 "./src/Parser/parser.l"
+#line 28 "./src/Parser/parser.l"
 return RETURN;
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 33 "./src/Parser/parser.l"
+#line 29 "./src/Parser/parser.l"
 return LOOP;
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 34 "./src/Parser/parser.l"
+#line 30 "./src/Parser/parser.l"
 return LET;
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 35 "./src/Parser/parser.l"
+#line 31 "./src/Parser/parser.l"
 return CONST;
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 36 "./src/Parser/parser.l"
+#line 32 "./src/Parser/parser.l"
 return CONTINUE;
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 37 "./src/Parser/parser.l"
+#line 33 "./src/Parser/parser.l"
 return TYPEOF;
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 40 "./src/Parser/parser.l"
+#line 36 "./src/Parser/parser.l"
 { yylval.node = new AST_NODE { new AST_Number(atof(yytext)) }; return NUMBER; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 41 "./src/Parser/parser.l"
+#line 37 "./src/Parser/parser.l"
 {yylval.node = new AST_NODE { (yytext == "true") ? new AST_Bool(true):new AST_Bool(false) }; return BOOL; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 42 "./src/Parser/parser.l"
+#line 38 "./src/Parser/parser.l"
 {yylval.node = new AST_NODE { new AST_Null }; return _NULL; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 43 "./src/Parser/parser.l"
+#line 39 "./src/Parser/parser.l"
 { std::string res = std::string { yytext }; yylval.node = new AST_NODE {new AST_Var(res) }; return ID; }
 	YY_BREAK
 case 13:
 /* rule 13 can match eol */
 YY_RULE_SETUP
-#line 44 "./src/Parser/parser.l"
+#line 40 "./src/Parser/parser.l"
 {
     std::string res = std::string(yytext); 
     yylval.node = new AST_NODE { new AST_String(res) };
@@ -855,86 +851,86 @@ YY_RULE_SETUP
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 50 "./src/Parser/parser.l"
+#line 46 "./src/Parser/parser.l"
 return ASSIGN;
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 51 "./src/Parser/parser.l"
+#line 47 "./src/Parser/parser.l"
 return COMPARE;
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 52 "./src/Parser/parser.l"
+#line 48 "./src/Parser/parser.l"
 return NOT;
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 53 "./src/Parser/parser.l"
+#line 49 "./src/Parser/parser.l"
 return PLUS;
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 54 "./src/Parser/parser.l"
+#line 50 "./src/Parser/parser.l"
 return MINUS;
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 55 "./src/Parser/parser.l"
+#line 51 "./src/Parser/parser.l"
 return TIMES;
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 56 "./src/Parser/parser.l"
+#line 52 "./src/Parser/parser.l"
 return DIVIDE;
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 57 "./src/Parser/parser.l"
+#line 53 "./src/Parser/parser.l"
 return POWER;
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 58 "./src/Parser/parser.l"
+#line 54 "./src/Parser/parser.l"
 return PARAN_LEFT;
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 59 "./src/Parser/parser.l"
+#line 55 "./src/Parser/parser.l"
 return PARAN_RIGHT;
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 60 "./src/Parser/parser.l"
+#line 56 "./src/Parser/parser.l"
 return BRACKET_LEFT;
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 61 "./src/Parser/parser.l"
+#line 57 "./src/Parser/parser.l"
 return BRACKET_RIGHT;
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 62 "./src/Parser/parser.l"
+#line 58 "./src/Parser/parser.l"
 return PARAM_SEPARATOR;
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 64 "./src/Parser/parser.l"
+#line 60 "./src/Parser/parser.l"
 return END_OF_LINE;
 	YY_BREAK
 case 28:
 /* rule 28 can match eol */
 YY_RULE_SETUP
-#line 65 "./src/Parser/parser.l"
+#line 61 "./src/Parser/parser.l"
 { ++lineNum; };
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 66 "./src/Parser/parser.l"
+#line 62 "./src/Parser/parser.l"
 ECHO;
 	YY_BREAK
-#line 937 "src/Parser/parser.lex.c"
+#line 933 "src/Parser/parser.lex.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1935,5 +1931,5 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 66 "./src/Parser/parser.l"
+#line 62 "./src/Parser/parser.l"
 

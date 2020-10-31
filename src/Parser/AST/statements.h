@@ -46,11 +46,13 @@ class AST_Loop {
 
 class AST_Return {
     public:
-    AST_NODE value;
+    AST_NODE* value;
     AST_Return() {
-        this->value = AST_NODE { new AST_Null };
+        this->value = new AST_NODE { new AST_Null };
     };
-    AST_Return(AST_NODE &val) : value(val) {};
+    AST_Return(AST_NODE* val) {
+        this->value = val;
+    }
 };
 
 class AST_Continue {
