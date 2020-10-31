@@ -1,4 +1,4 @@
-
+#pragma once
 #include <variant>
 #include <memory>
 #include <vector>
