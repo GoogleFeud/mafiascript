@@ -45,6 +45,10 @@ class Enviourment {
         this->values.clear();
     }
 
+    ~Enviourment() {
+        this->values.clear();
+        //delete this;
+    }
 
     private:
     std::unordered_map<std::string, MS_VALUE> values; 

@@ -77,13 +77,15 @@ extern int yydebug;
     ASSIGN = 278,                  /* ASSIGN  */
     PARAN_LEFT = 279,              /* PARAN_LEFT  */
     PARAN_RIGHT = 280,             /* PARAN_RIGHT  */
-    PARAM_SEPARATOR = 281,         /* PARAM_SEPARATOR  */
+    COMMA = 281,                   /* COMMA  */
     BRACKET_LEFT = 282,            /* BRACKET_LEFT  */
     BRACKET_RIGHT = 283,           /* BRACKET_RIGHT  */
     QUESTION_MARK = 284,           /* QUESTION_MARK  */
     DOUBLE_DOT = 285,              /* DOUBLE_DOT  */
-    END_OF_LINE = 286,             /* END_OF_LINE  */
-    NEG = 287                      /* NEG  */
+    S_BRACKET_LEFT = 286,          /* S_BRACKET_LEFT  */
+    S_BRACKET_RIGHT = 287,         /* S_BRACKET_RIGHT  */
+    END_OF_LINE = 288,             /* END_OF_LINE  */
+    NEG = 289                      /* NEG  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -96,8 +98,9 @@ union YYSTYPE
 
     AST_NODE* node;
     AST_Block* block; 
+    AST_List* list;
 
-#line 101 "src/Parser/parser.tab.h"
+#line 104 "src/Parser/parser.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

@@ -18,12 +18,13 @@ AST_Block* prog;
 %union{
     AST_NODE* node;
     AST_Block* block; 
+    AST_List* list;
 }
 
 %token STRING NUMBER ID BOOL _NULL 
 %token IF ELSE RETURN LOOP LET CONST CONTINUE TYPEOF
 %token PLUS MINUS TIMES DIVIDE POWER COMPARE NOT ASSIGN 
-%token PARAN_LEFT PARAN_RIGHT PARAM_SEPARATOR BRACKET_LEFT BRACKET_RIGHT QUESTION_MARK DOUBLE_DOT
+%token PARAN_LEFT PARAN_RIGHT COMMA BRACKET_LEFT BRACKET_RIGHT QUESTION_MARK DOUBLE_DOT S_BRACKET_LEFT S_BRACKET_RIGHT
 %token END_OF_LINE
 
 %left PLUS MINUS
@@ -38,6 +39,7 @@ AST_Block* prog;
 %type <node> Block
 %type <node> If
 %type <block> Input
+%type <list> ExpressionList
 
 %define parse.error verbose
 %start Input
@@ -57,6 +59,10 @@ Any: Expression { $$ = $1; };
 | Statement { $$ = $1; };
 | BRACKET_LEFT Block BRACKET_RIGHT {$$ = $2; };
 
+ExpressionList: %empty { $$ = new AST_List; };
+| Expression { $$ = new AST_List($1); };
+| ExpressionList COMMA Expression { $$->push($3); };
+
 Expression: NUMBER
 | STRING
 | ID
@@ -75,7 +81,9 @@ Expression: NUMBER
 | ID ASSIGN Expression {$$ = new AST_NODE { new AST_Assign($1, $3) }; };
 //Ternery
 | Expression QUESTION_MARK Expression DOUBLE_DOT Expression { $$ = new AST_NODE { new AST_Ternery($1, $3, $5) }; };
-
+//Array
+| S_BRACKET_LEFT ExpressionList S_BRACKET_RIGHT {$$ = new AST_NODE { new AST_Array($2) }; };
+ 
 Statement: If;
 | LET ID ASSIGN Expression {$$ = new AST_NODE { new AST_Declare($2, $4) }; };
 | RETURN Expression { $$ = new AST_NODE { new AST_Return($2) }; };

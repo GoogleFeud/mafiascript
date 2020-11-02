@@ -35,6 +35,14 @@ class Context {
             case AST_Types::MS_NULL: {
                 return MS_VALUE { nullptr };
             };
+            case AST_Types::MS_ARRAY: {
+                AST_Array* arr = downcast<AST_Array*>(node);
+                std::vector<MS_VALUE> realArr;
+                for (AST_NODE* item : arr->list->entries) {
+                    realArr.push_back(this->executeAST(item, env));
+                };
+                return MS_VALUE { std::make_shared<_MS_Array>(realArr) };
+            };
             case AST_Types::MS_VAR: {
                 AST_Var* id = downcast<AST_Var*>(node);
                 return env->get(id->value);
@@ -72,13 +80,13 @@ class Context {
                     if (ms_if->ifTrue->index() != AST_Types::MS_BLOCK) return this->executeAST(ms_if->ifTrue, env);
                     Enviourment* newEnv = env->extend();
                     auto val = this->executeAST(ms_if->ifTrue, newEnv);
-                    newEnv->clear();
+                    delete newEnv;
                     return val;
                 } else if (ms_if->ifFalse != NULL) {
                     if (ms_if->ifFalse->index() != AST_Types::MS_BLOCK) return this->executeAST(ms_if->ifFalse, env);
                     Enviourment* newEnv = env->extend();
                     auto val = this->executeAST(ms_if->ifFalse, newEnv);
-                    newEnv->clear();
+                    delete newEnv;
                     return val;
                 }
                 return MS_VALUE { nullptr };

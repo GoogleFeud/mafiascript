@@ -56,7 +56,9 @@ THEN "=>"
 ")" return PARAN_RIGHT;
 "{" return BRACKET_LEFT;
 "}" return BRACKET_RIGHT;
-"," return PARAM_SEPARATOR;
+"[" return S_BRACKET_LEFT;
+"]" return S_BRACKET_RIGHT;
+"," return COMMA;
 "?" return QUESTION_MARK;
 ":" return DOUBLE_DOT;
 

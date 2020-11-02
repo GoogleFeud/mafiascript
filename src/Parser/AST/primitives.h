@@ -27,17 +27,27 @@ class AST_Bool {
     }
 };
 
-class AST_Array {
-    public:
-    std::vector<AST_NODE> entries;
-    AST_Array() {};
-    AST_Array(AST_NODE &exp) {
-        this->entries.push_back(exp);
+
+class AST_List {
+    public: 
+    std::vector<AST_NODE*> entries;
+    AST_List() {};
+    AST_List(AST_NODE* firstEntry) {
+        this->entries.push_back(firstEntry);
     };
 
-    void push(AST_NODE &exp) {
-        this->entries.push_back(exp);
-    }
+    void push(AST_NODE* entry) {
+        this->entries.push_back(entry);
+    };
+};
+
+class AST_Array {
+    public:
+    AST_List* list;
+    AST_Array() {};
+    AST_Array(AST_List *list) {
+        this->list = list;
+    };
 };
 
 class AST_Object {

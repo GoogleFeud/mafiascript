@@ -2,25 +2,6 @@
 
 #include <variant>
 
-/**
-enum AST_Types {
-    STRING,
-    NUMBER,
-    BOOL,
-    MS_NULL,
-    ARRAY, 
-    OBJECT, 
-    VAR, 
-    ASSIGN, 
-    BINARY, 
-    IF, 
-    LOOP, 
-    RETURN, 
-    CONTINUE, 
-    BLOCK 
-}; 
-*/
-
 enum AST_Types {
     MS_STRING,
     MS_NUMBER,
