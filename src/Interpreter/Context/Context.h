@@ -8,10 +8,14 @@
 
 class Context {
     public:
-    Enviourment* global;
+    Enviourment* global = new Enviourment();
     
-    MS_VALUE run(std::string &code) {
-        return executeAST(new AST_NODE { parse(code) }, this->global);
+    void run(std::string &code) {
+        this->executeAST(new AST_NODE { parse(code) }, this->global);
+    };
+
+    void run(AST_Block *code) {
+        this->executeAST(new AST_NODE { code }, this->global);
     };
 
     MS_VALUE executeAST(AST_NODE* node, Enviourment* env) {
@@ -33,47 +37,58 @@ class Context {
             };
             case AST_Types::MS_VAR: {
                 AST_Var* id = downcast<AST_Var*>(node);
-                std::cout<<id->value;
                 return env->get(id->value);
+            };
+            case AST_Types::MS_ASSIGN: {
+                AST_Assign* assign = downcast<AST_Assign*>(node);
+                AST_Var* name = downcast<AST_Var*>(assign->name);
+                auto val = this->executeAST(assign->value, env);
+                env->set(name->value, val);
+                return val;
             };
             case AST_Types::MS_BINARY: {
                 AST_Binary* binary = downcast<AST_Binary*>(node);
                 MS_VALUE a = this->executeAST(binary->left, env);
                 MS_VALUE b = this->executeAST(binary->right, env);
                 return applyOperator(a, b, binary->op);
-            }
+            };
+            case AST_Types::MS_DECLARE: {
+                AST_Declare* declare = downcast<AST_Declare*>(node);
+                AST_Var* name = downcast<AST_Var*>(declare->name);
+                auto val = this->executeAST(declare->value, env);
+                env->define(name->value, val);
+                return val;
+            };
             case AST_Types::MS_IF: {
                 AST_If* ms_if = downcast<AST_If*>(node);
                 MS_VALUE cond = this->executeAST(ms_if->condition, env);
-                std::cout<<cond.index();
                 if (!isFalsey(cond)) {
                     Enviourment* newEnv = env->extend();
                     auto val = this->executeAST(ms_if->ifTrue, newEnv);
                     newEnv->clear();
                     return val;
-                } else if (ms_if->ifFalse) {
+                } else if (ms_if->ifFalse != NULL) {
                     Enviourment* newEnv = env->extend();
                     auto val = this->executeAST(ms_if->ifFalse, newEnv);
                     newEnv->clear();
                     return val;
                 }
-                break;
+                return MS_VALUE { nullptr };
             };
             case AST_Types::MS_BLOCK: {
                 AST_Block* block = downcast<AST_Block*>(node);
                 for (AST_NODE* blockNode : block->nodes) {
                     if (blockNode->index() == AST_Types::MS_RETURN) {
                         AST_Return* ret = downcast<AST_Return*>(blockNode);
-                        return this->executeAST(ret->value, env);
+                        auto v = this->executeAST(ret->value, env);
+                        return v;
                     };
                     this->executeAST(blockNode, env);
                 };
-                break;
+                return MS_VALUE { nullptr };
             };
-        }
-    }
-
-
-
+        default: throw std::runtime_error("Invalid AST type!");
+    };
+    };
 };
 

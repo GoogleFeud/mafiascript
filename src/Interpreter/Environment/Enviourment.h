@@ -1,9 +1,10 @@
 
 #include "../Types/primitives.h"
+#include <stdexcept>
 
 class Enviourment {
     public:
-    Enviourment* parent;
+    Enviourment* parent = NULL;
     Enviourment() {};
     Enviourment(Enviourment* parent) {
         this->parent = parent;
@@ -13,26 +14,31 @@ class Enviourment {
         return new Enviourment(this);
     };
 
+    Enviourment* lookup(std::string &key) {
+        if (this->values.count(key)) return this;
+        if (this->parent != NULL) return this->parent->lookup(key);
+        return NULL;
+    }
+
     MS_VALUE get(std::string &key) {
         if (this->values.count(key)) return this->values[key];
         if (this->parent) return this->parent->get(key);
-        throw key + " is not defined!";
+        throw std::runtime_error(key + " is not defined!");
     }
 
-    bool has(std::string &key) {
-        if (this->values.count(key)) true;
-        if (this->parent) return this->parent->has(key);
-        return false;
-    }
-
-    void define(std::string &key, MS_VALUE val) {
-        if (this->has(key)) throw key + "is already defined!";
+    void define(std::string &key, MS_VALUE &val) {
+        if (this->lookup(key)) throw std::runtime_error(key + " is already defined!");
         this->values.insert({key, val});
     };
 
     void set(std::string &key, MS_VALUE val) {
-        if (!this->has(key)) throw key + " is not defined!";
-        this->values.insert_or_assign(key, val);
+        Enviourment* env = this->lookup(key);
+        if (!env) throw std::runtime_error(key + " is not defined!");
+        env->unsafeSet(key, val);
+    };
+
+    void unsafeSet(std::string &key, MS_VALUE &val) {
+        this->values[key] = val;
     };
 
     void clear() {

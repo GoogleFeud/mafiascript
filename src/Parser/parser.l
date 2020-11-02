@@ -34,7 +34,8 @@ THEN "=>"
 
 
 {NUMBER} { yylval.node = new AST_NODE { new AST_Number(atof(yytext)) }; return NUMBER; }
-{BOOL} {std::cout<<(yytext == "true") ? true:false; yylval.node = new AST_NODE { (yytext == "true") ? new AST_Bool(true):new AST_Bool(false) }; return BOOL; }
+"true" {yylval.node = new AST_NODE { new AST_Bool(true) }; return BOOL; }
+"false" {yylval.node = new AST_NODE { new AST_Bool(false) }; return BOOL; }
 {NULL} {yylval.node = new AST_NODE { new AST_Null }; return _NULL; }
 {ID} { std::string res = std::string { yytext }; yylval.node = new AST_NODE { new AST_Var(res) }; return ID; }
 {STRING} {

@@ -65,9 +65,11 @@ Expression: NUMBER
 | PARAN_LEFT Expression PARAN_RIGHT {$$ = $2; };
 | Expression COMPARE Expression {std::string op = "=="; $$ = new AST_NODE { new AST_Binary($1, $3, op) }; };
 | Expression NOT COMPARE Expression {std::string op = "!="; $$ = new AST_NODE { new AST_Binary($1, $4, op) }; };
+| ID ASSIGN Expression {$$ = new AST_NODE { new AST_Assign($1, $3) }; };
 
 Statement: IF PARAN_LEFT Expression PARAN_RIGHT BRACKET_LEFT Block BRACKET_RIGHT { $$ = new AST_NODE { new AST_If($3, $6, NULL) }; };
 | IF PARAN_LEFT Expression PARAN_RIGHT Expression { $$ = new AST_NODE { new AST_If($3, new AST_NODE { new AST_Block($5) }, NULL) }; };
+| LET ID ASSIGN Expression {$$ = new AST_NODE { new AST_Declare($2, $4) }; };
 | RETURN Expression { $$ = new AST_NODE { new AST_Return($2) }; };
 
 %%

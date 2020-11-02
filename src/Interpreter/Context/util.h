@@ -31,6 +31,7 @@ bool isFalsey(MS_VALUE &val) {
             float num = downcast<float>(val);
             if (num == 0) return true;
         };
+        default: return true;
     };
 };
 
@@ -45,4 +46,5 @@ MS_VALUE applyOperator(MS_VALUE &a, MS_VALUE &b, std::string &op) {
     else if (op == "*") return toNumber(a) * toNumber(b);
     else if (op == "/") return toNumber(a) / toNumber(b);
     else if (op == "==") return toNumber(a) == toNumber(b);
+    return MS_VALUE { nullptr };
 };

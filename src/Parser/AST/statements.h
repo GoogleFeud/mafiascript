@@ -19,6 +19,17 @@ class AST_Block {
     
 };
 
+class AST_Declare {
+    public:
+    AST_NODE* name;
+    AST_NODE* value;
+
+    AST_Declare(AST_NODE* name, AST_NODE* value) {
+        this->name = name;
+        this->value = value;
+    };
+};
+
 class AST_If {
     public:
     AST_NODE* condition;

@@ -4,14 +4,14 @@
 
 class AST_Assign {
     public:
-    bool isConst;
-    AST_Var* name;
-    AST_NODE value;
+    AST_NODE* name;
+    AST_NODE* value;
 
-    AST_Assign(AST_Var* name, AST_NODE& value, bool isConst) : value(value) {
+    AST_Assign(AST_NODE* name, AST_NODE *value) {
         this->name = name;
-        this->isConst = isConst;
+        this->value = value;
     };
+
 };
 
 class AST_Binary {

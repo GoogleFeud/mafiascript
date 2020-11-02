@@ -3,23 +3,22 @@
 
 #include "./Interpreter/Context/Context.h"
 
-#include <chrono> 
-using namespace std::chrono; 
+#include <chrono>
+using namespace std::chrono;
 
-
-int main() {
-    std::string code = "return star;";
+int main()
+{
+    std::string code = "let res = 50; if (true) { res = res + res; };";
     Context ctx = Context();
-    std::string star = "star";
-    ctx.global->set(star, MS_VALUE { std::make_shared<std::string>("Hello World!") });
-    auto start = high_resolution_clock::now(); 
-    MS_VALUE mafiascriptRes = ctx.run(code);
-   // std::cout<<mafiascriptRes.index();
-    float res = downcast<float>(mafiascriptRes);
-    auto stop = high_resolution_clock::now(); 
-    auto duration = duration_cast<microseconds>(stop - start); 
-    std::cout<<"Result: "<<res<<std::endl;
-    std::cout<<"Time it took: "<<duration.count()<<" microseconds!";
+    auto start = high_resolution_clock::now();
+    ctx.run(code);
+    auto stop = high_resolution_clock::now();
+    std::string resName = "res";
+    MS_VALUE resVal = ctx.global->get(resName);
+    float val = downcast<float>(resVal);
+    std::cout<<"Value " << val << std::endl;
+    auto duration = duration_cast<microseconds>(stop - start);
+    std::cout << "Time it took: " << duration.count() << " microseconds!";
     system("pause");
+    return 0;
 }
-

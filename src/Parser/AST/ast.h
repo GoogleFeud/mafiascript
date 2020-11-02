@@ -34,6 +34,7 @@ enum AST_Types {
     MS_FUNCTION,
     MS_CALL,
     MS_TERNERY,
+    MS_DECLARE,
     MS_IF,
     MS_LOOP,
     MS_RETURN,
@@ -59,8 +60,9 @@ class AST_If;
 class AST_Loop;
 class AST_Return;
 class AST_Continue;
+class AST_Declare;
 
-using AST_NODE = std::variant<AST_String*, AST_Number*, AST_Bool*, AST_Null*, AST_Array*, AST_Object*, AST_Var*, AST_Binary*, AST_Assign*, AST_Function*, AST_Call*, AST_Ternery*, AST_If*, AST_Loop*, AST_Return*, AST_Continue*, AST_Block*>;
+using AST_NODE = std::variant<AST_String*, AST_Number*, AST_Bool*, AST_Null*, AST_Array*, AST_Object*, AST_Var*, AST_Binary*, AST_Assign*, AST_Function*, AST_Call*, AST_Ternery*, AST_Declare*, AST_If*, AST_Loop*, AST_Return*, AST_Continue*, AST_Block*>;
 //using AST_EXPRESSION = std::variant<AST_String*, AST_Number*, AST_Bool*, AST_Null*, AST_Array*, AST_Object*, AST_Var*, AST_Binary*, AST_Assign*, AST_Function*, AST_Call*, AST_Ternery*>;
 
 template <typename T>
