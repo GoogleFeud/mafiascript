@@ -104,6 +104,14 @@ if (a > b) {
 }
 ```
 
+```
+let a = 55;
+if (a == 55) return true
+else if (a == 50) return false
+else return null;
+
+```
+
 ### Loops
 
 Mafiascript has only one keyword for loops, the `loop` keyword. All loop keyword have a timeout you can specify in the settings. 

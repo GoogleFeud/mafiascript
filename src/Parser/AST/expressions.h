@@ -12,6 +12,12 @@ class AST_Assign {
         this->value = value;
     };
 
+    ~AST_Assign() {
+        delete this->name;
+        delete this->value;
+        delete this;
+    };
+
 };
 
 class AST_Binary {
@@ -23,6 +29,12 @@ class AST_Binary {
     AST_Binary(AST_NODE *left, AST_NODE *right, std::string &op) : op(op) {
         this->left = left;
         this->right = right;
+    };
+
+    ~AST_Binary() {
+        delete this->left;
+        delete this->right;
+        delete this;
     };
 
 };
@@ -49,10 +61,21 @@ class AST_Call {
 
 class AST_Ternery {
     public:
-    AST_NODE condition;
-    AST_NODE ifTrue;
-    AST_NODE ifFalse;
+    AST_NODE* condition;
+    AST_NODE* ifTrue;
+    AST_NODE* ifFalse;
 
-    AST_Ternery(AST_NODE& cond, AST_NODE& ifTrue, AST_NODE& ifFalse) : condition(cond), ifTrue(ifTrue), ifFalse(ifFalse) {
+    AST_Ternery(AST_NODE* cond, AST_NODE* ifTrue, AST_NODE* ifFalse) {
+        this->condition = cond;
+        this->ifTrue = ifTrue;
+        this->ifFalse = ifFalse;
     };
+
+    ~AST_Ternery() {
+        delete this->condition;
+        delete this->ifTrue;
+        delete this->ifFalse;
+        delete this;
+    };
+    
 };

@@ -1,5 +1,6 @@
 
 #include <iostream>
+#include <fstream>
 
 #include "./Interpreter/Context/Context.h"
 
@@ -8,7 +9,8 @@ using namespace std::chrono;
 
 int main()
 {
-    std::string code = "let res = 50; if (true) { res = res + res; };";
+    std::ifstream ifs("script.ms");
+    std::string code( (std::istreambuf_iterator<char>(ifs) ), (std::istreambuf_iterator<char>() ) );
     Context ctx = Context();
     auto start = high_resolution_clock::now();
     ctx.run(code);

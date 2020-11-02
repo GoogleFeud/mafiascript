@@ -46,6 +46,12 @@ class Context {
                 env->set(name->value, val);
                 return val;
             };
+            case AST_Types::MS_TERNERY: {
+                AST_Ternery* ternery = downcast<AST_Ternery*>(node);
+                MS_VALUE cond = this->executeAST(ternery->condition, env);
+                if (!isFalsey(cond)) return this->executeAST(ternery->ifTrue, env);
+                return this->executeAST(ternery->ifFalse, env);
+            };
             case AST_Types::MS_BINARY: {
                 AST_Binary* binary = downcast<AST_Binary*>(node);
                 MS_VALUE a = this->executeAST(binary->left, env);
@@ -63,11 +69,13 @@ class Context {
                 AST_If* ms_if = downcast<AST_If*>(node);
                 MS_VALUE cond = this->executeAST(ms_if->condition, env);
                 if (!isFalsey(cond)) {
+                    if (ms_if->ifTrue->index() != AST_Types::MS_BLOCK) return this->executeAST(ms_if->ifTrue, env);
                     Enviourment* newEnv = env->extend();
                     auto val = this->executeAST(ms_if->ifTrue, newEnv);
                     newEnv->clear();
                     return val;
                 } else if (ms_if->ifFalse != NULL) {
+                    if (ms_if->ifFalse->index() != AST_Types::MS_BLOCK) return this->executeAST(ms_if->ifFalse, env);
                     Enviourment* newEnv = env->extend();
                     auto val = this->executeAST(ms_if->ifFalse, newEnv);
                     newEnv->clear();

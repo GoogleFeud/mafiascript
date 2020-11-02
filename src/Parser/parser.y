@@ -20,10 +20,10 @@ AST_Block* prog;
     AST_Block* block; 
 }
 
-%token STRING NUMBER ID BOOL _NULL
+%token STRING NUMBER ID BOOL _NULL 
 %token IF ELSE RETURN LOOP LET CONST CONTINUE TYPEOF
-%token PLUS MINUS TIMES DIVIDE POWER COMPARE NOT ASSIGN
-%token PARAN_LEFT PARAN_RIGHT PARAM_SEPARATOR BRACKET_LEFT BRACKET_RIGHT
+%token PLUS MINUS TIMES DIVIDE POWER COMPARE NOT ASSIGN 
+%token PARAN_LEFT PARAN_RIGHT PARAM_SEPARATOR BRACKET_LEFT BRACKET_RIGHT QUESTION_MARK DOUBLE_DOT
 %token END_OF_LINE
 
 %left PLUS MINUS
@@ -31,11 +31,12 @@ AST_Block* prog;
 %left NEG
 %right POWER
 
-%type <node> NUMBER STRING ID BOOL _NULL
+%type <node> NUMBER STRING ID BOOL _NULL 
 %type <node> Expression
 %type <node> Statement
-%type <node> Line
+%type <node> Line Any
 %type <node> Block
+%type <node> If
 %type <block> Input
 
 %define parse.error verbose
@@ -52,11 +53,16 @@ Block: %empty { $$ = new AST_NODE { new AST_Block }; };
 | Line { AST_Block* block = new AST_Block; block->push($1); $$ = new AST_NODE {block}; }
 | Block Line { downcast<AST_Block*>($$)->push($2); };
 
+Any: Expression { $$ = $1; };
+| Statement { $$ = $1; };
+| BRACKET_LEFT Block BRACKET_RIGHT {$$ = $2; };
+
 Expression: NUMBER
 | STRING
 | ID
 | BOOL
 | _NULL
+// Binary 
 | Expression PLUS Expression { std::string op = "+"; $$ = new AST_NODE { new AST_Binary($1, $3, op) };};
 | Expression MINUS Expression {std::string op = "-"; $$ = new AST_NODE { new AST_Binary($1, $3, op) };};
 | Expression TIMES Expression {std::string op = "*"; $$ = new AST_NODE { new AST_Binary($1, $3, op) };};
@@ -65,13 +71,17 @@ Expression: NUMBER
 | PARAN_LEFT Expression PARAN_RIGHT {$$ = $2; };
 | Expression COMPARE Expression {std::string op = "=="; $$ = new AST_NODE { new AST_Binary($1, $3, op) }; };
 | Expression NOT COMPARE Expression {std::string op = "!="; $$ = new AST_NODE { new AST_Binary($1, $4, op) }; };
+// Assign
 | ID ASSIGN Expression {$$ = new AST_NODE { new AST_Assign($1, $3) }; };
+//Ternery
+| Expression QUESTION_MARK Expression DOUBLE_DOT Expression { $$ = new AST_NODE { new AST_Ternery($1, $3, $5) }; };
 
-Statement: IF PARAN_LEFT Expression PARAN_RIGHT BRACKET_LEFT Block BRACKET_RIGHT { $$ = new AST_NODE { new AST_If($3, $6, NULL) }; };
-| IF PARAN_LEFT Expression PARAN_RIGHT Expression { $$ = new AST_NODE { new AST_If($3, new AST_NODE { new AST_Block($5) }, NULL) }; };
+Statement: If;
 | LET ID ASSIGN Expression {$$ = new AST_NODE { new AST_Declare($2, $4) }; };
 | RETURN Expression { $$ = new AST_NODE { new AST_Return($2) }; };
 
+If: IF PARAN_LEFT Expression PARAN_RIGHT Any { $$ = new AST_NODE { new AST_If($3, $5, NULL) }; };
+| IF PARAN_LEFT Expression PARAN_RIGHT Any ELSE Any { $$ = new AST_NODE { new AST_If($3, $5, $7) }; };
 %%
 
 int yyerror(char const *s) {

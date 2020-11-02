@@ -57,6 +57,8 @@ THEN "=>"
 "{" return BRACKET_LEFT;
 "}" return BRACKET_RIGHT;
 "," return PARAM_SEPARATOR;
+"?" return QUESTION_MARK;
+":" return DOUBLE_DOT;
 
 ";" return END_OF_LINE;
 "\n" { ++lineNum; };
