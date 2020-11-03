@@ -19,6 +19,7 @@ AST_Block* prog;
     AST_NODE* node;
     AST_Block* block; 
     AST_List* list;
+    AST_PairList* pairList;
 }
 
 %token STRING NUMBER ID BOOL _NULL 
@@ -40,6 +41,7 @@ AST_Block* prog;
 %type <node> If
 %type <block> Input
 %type <list> ExpressionList
+%type <pairList> PairList
 
 %define parse.error verbose
 %start Input
@@ -63,6 +65,10 @@ ExpressionList: %empty { $$ = new AST_List; };
 | Expression { $$ = new AST_List($1); };
 | ExpressionList COMMA Expression { $$->push($3); };
 
+PairList: %empty {$$ = new AST_PairList; };
+| STRING DOUBLE_DOT Expression {$$ = new AST_PairList($1, $3); };
+| PairList COMMA STRING DOUBLE_DOT Expression { $$->push($3, $5); };
+ 
 Expression: NUMBER
 | STRING
 | ID
@@ -83,8 +89,12 @@ Expression: NUMBER
 | Expression QUESTION_MARK Expression DOUBLE_DOT Expression { $$ = new AST_NODE { new AST_Ternery($1, $3, $5) }; };
 //Array
 | S_BRACKET_LEFT ExpressionList S_BRACKET_RIGHT {$$ = new AST_NODE { new AST_Array($2) }; };
+// Object
+| BRACKET_LEFT PairList BRACKET_RIGHT {$$ = new AST_NODE { new AST_Object($2) }; };
  
 Statement: If;
+// Define:
+| LET ID { $$ = new AST_NODE { new AST_Declare($2, new AST_NODE { new AST_Null }) }; };
 | LET ID ASSIGN Expression {$$ = new AST_NODE { new AST_Declare($2, $4) }; };
 | RETURN Expression { $$ = new AST_NODE { new AST_Return($2) }; };
 
@@ -97,7 +107,7 @@ int yyerror(char const *s) {
   return 1;
 }
 
-AST_Block* parse(std::string &code) {
+AST_Block* parseAST(std::string &code) {
     prog = new AST_Block();
     setCode(code);
     int ret = yyparse();

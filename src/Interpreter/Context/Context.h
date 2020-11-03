@@ -11,7 +11,7 @@ class Context {
     Enviourment* global = new Enviourment();
     
     void run(std::string &code) {
-        this->executeAST(new AST_NODE { parse(code) }, this->global);
+        this->executeAST(new AST_NODE { parseAST(code) }, this->global);
     };
 
     void run(AST_Block *code) {
@@ -43,15 +43,24 @@ class Context {
                 };
                 return MS_VALUE { std::make_shared<_MS_Array>(realArr) };
             };
+            case AST_Types::MS_OBJECT: {
+                AST_Object* obj = downcast<AST_Object*>(node);
+                std::unordered_map<std::string, MS_VALUE> realMap;
+                for (std::pair<AST_NODE*, AST_NODE*> pair : obj->entries->entries) {
+                    AST_String* name = downcast<AST_String*>(pair.first);
+                    auto val = this->executeAST(pair.second, env);
+                    realMap.insert({name->value, val});
+                };
+                return MS_VALUE {std::make_shared<_MS_Object>(realMap) };
+            };
             case AST_Types::MS_VAR: {
                 AST_Var* id = downcast<AST_Var*>(node);
                 return env->get(id->value);
             };
             case AST_Types::MS_ASSIGN: {
                 AST_Assign* assign = downcast<AST_Assign*>(node);
-                AST_Var* name = downcast<AST_Var*>(assign->name);
                 auto val = this->executeAST(assign->value, env);
-                env->set(name->value, val);
+                env->set(assign->name, val);
                 return val;
             };
             case AST_Types::MS_TERNERY: {
@@ -68,10 +77,9 @@ class Context {
             };
             case AST_Types::MS_DECLARE: {
                 AST_Declare* declare = downcast<AST_Declare*>(node);
-                AST_Var* name = downcast<AST_Var*>(declare->name);
                 auto val = this->executeAST(declare->value, env);
-                env->define(name->value, val);
-                return val;
+                env->define(declare->name, val);
+                return MS_VALUE { nullptr };
             };
             case AST_Types::MS_IF: {
                 AST_If* ms_if = downcast<AST_If*>(node);
@@ -105,6 +113,10 @@ class Context {
             };
         default: throw std::runtime_error("Invalid AST type!");
     };
+    };
+
+    ~Context() {
+        delete this->global;
     };
 };
 

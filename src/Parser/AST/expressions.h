@@ -4,18 +4,17 @@
 
 class AST_Assign {
     public:
-    AST_NODE* name;
+    std::string name;
     AST_NODE* value;
 
     AST_Assign(AST_NODE* name, AST_NODE *value) {
-        this->name = name;
+        this->name = downcast<AST_Var*>(name)->value;
+        delete name;
         this->value = value;
     };
 
     ~AST_Assign() {
-        delete this->name;
         delete this->value;
-        delete this;
     };
 
 };
@@ -34,7 +33,6 @@ class AST_Binary {
     ~AST_Binary() {
         delete this->left;
         delete this->right;
-        delete this;
     };
 
 };
@@ -75,7 +73,6 @@ class AST_Ternery {
         delete this->condition;
         delete this->ifTrue;
         delete this->ifFalse;
-        delete this;
     };
     
 };

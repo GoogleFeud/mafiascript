@@ -99,8 +99,9 @@ union YYSTYPE
     AST_NODE* node;
     AST_Block* block; 
     AST_List* list;
+    AST_PairList* pairList;
 
-#line 104 "src/Parser/parser.tab.h"
+#line 105 "src/Parser/parser.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

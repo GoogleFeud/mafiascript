@@ -1,4 +1,4 @@
-
+#pragma once
 #include "../Types/primitives.h"
 #include <stdexcept>
 
@@ -53,3 +53,7 @@ class Enviourment {
     private:
     std::unordered_map<std::string, MS_VALUE> values; 
 };
+
+void deleteEnv(Enviourment* env) {
+    delete env;
+}

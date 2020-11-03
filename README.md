@@ -68,27 +68,33 @@ arr[0]; // 1
 
 ### Functions
 
-Functions are callable objects. They can contain key-value pairs, and can be called. By default, functions are always anonymous, and must be assigned to a variable.
+Functions are always anonymous, and must be assigned to a variable to be called. 
 
 ```
 const func = (a, b) => {
-    return a + b + z;
+    return a + b;
 }
-
-func.z = 0;
 
 func(1, 1); // 2
-func.z = 10;
-func(1, 1); // 12
+func(1, 11); // 12
 ```
 
-```
-const callbackFn = (otherFn) => {
-    otherFn(10, 5);
-}
+Since Mafiascript has no garbage collector, all function scopes are `isolated`. They can access only variables from the global scope, since they last until the end of the program. To pass variables from other scopes to the function, either use parameters or `captures`. 
 
-callbackFn((a, b) => a - b);
 ```
+let fnThatHasAccessToTempVariable;
+{
+    const tempVariable = [1, 2, 3, 4];
+    fnThatHasAccessToTempVariable = [tempVariable](num) => {
+        return std.reduce(tempVariable, (a, b) => a + b, 0) + (num || 0);
+    };
+};
+
+fnThatHasAccessToTempVariable(); // 10
+fnThatHasAccessToTempVariable(5); // 15
+```
+
+Captured variables share the function's lifetime, when the last reference of the function is lost, the tempVariable is also lost.  
 
 ### Logic
 
@@ -145,6 +151,11 @@ loop (condition; after) {
 }
 ```
 
+### Memory management & GC
+
+`Mafiascript` does NOT have a real garbage collector. Complex types such as `string`, `array`, `object` and `function` are wrapped in a shared pointer, they get deleted when their reference count reaches zero. Simple and light types such as `number`, `bool` and `null` always get copied.
+
+
 ### Importing global objects
 
 ```cpp 
@@ -189,49 +200,6 @@ bool realValue = downcast<bool>(val); // Get the value if it's bool
 vector<MS_Value>* realValue = downcast<vector<MS_Value>*>(val); // Get the value if it's an array
 unordered_map<std::string, MS_Value>* realValue = downcast<unordered_map<std::string, MS_Value>*>(val) // Get if the value is an object
 val.value.call(std::vector { 1, 1 }); // MSValue(2);
-```
-
-### Memory management & GC
-
-`Mafiascript` does NOT have a garbage collector. Once a value goes out of scope, it gets deleted.
-
-```
-{
-    let a = 100;
-    //You can access a here
-} // a gets deleted, memory freed
-```
-
-If you want to bring the value outside of the scope, if the value is simple (number, bool, null), it gets copied, if it's a string, an object, an array or a func, it gets passed as a reference.
-
-```
-let res;
-{
-  let a = 100;
-  res = a;
-} // a still gets deleted, res is 100
-```
-
-```
-let res;
-{
-    let a = {someValue: 1};
-    res = a; // a gets moved to res.
-    a.someValue; // fine
-    res.someValue; // fine
-} // the object a and res hold gets deleted
-res.someValue; //error
-```
-
-```
-const someObj = {someValue: 1};
-let res;
-{
-    let a = {someObj: someObj };
-    res = a.someObj; //fine
-    a.someObj.someValue; // fine
-} // a's object gets deleted
-res.someValue; // fine
 ```
 
 

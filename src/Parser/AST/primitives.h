@@ -39,20 +39,59 @@ class AST_List {
     void push(AST_NODE* entry) {
         this->entries.push_back(entry);
     };
+
+    ~AST_List() {
+        for (AST_NODE* node : entries) {
+            delete node;
+        };
+    };
+
+};
+
+class AST_PairList {
+    public:
+    std::unordered_map<AST_NODE*, AST_NODE*> entries;
+    AST_PairList() { };
+    AST_PairList(AST_NODE* key, AST_NODE* value) {
+        this->entries[key] = value;
+    };
+
+    void push(AST_NODE* key, AST_NODE* val) {
+        this->entries[key] = val;
+    };
+
+    ~AST_PairList() {
+        for (std::pair<AST_NODE*, AST_NODE*> pair : entries) {
+              delete pair.first;
+              delete pair.second;
+        };
+    };
+
 };
 
 class AST_Array {
     public:
     AST_List* list;
-    AST_Array() {};
     AST_Array(AST_List *list) {
         this->list = list;
     };
+
+    ~AST_Array() {
+        delete list;
+    };
+
 };
 
 class AST_Object {
     public:
-    std::unordered_map<std::string, AST_NODE> entries;
+    AST_PairList* entries;
+    AST_Object(AST_PairList* list) {
+        this->entries = list;
+    };
+
+    ~AST_Object() {
+        delete entries;
+    };
 
 };
 

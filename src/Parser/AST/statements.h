@@ -21,13 +21,19 @@ class AST_Block {
 
 class AST_Declare {
     public:
-    AST_NODE* name;
+    std::string name;
     AST_NODE* value;
 
     AST_Declare(AST_NODE* name, AST_NODE* value) {
-        this->name = name;
+        this->name = downcast<AST_Var*>(name)->value;
+        delete name;
         this->value = value;
     };
+
+    ~AST_Declare() {
+        delete value;
+    };
+
 };
 
 class AST_If {
@@ -41,6 +47,12 @@ class AST_If {
         this->ifTrue = ifTrue;
         this->ifFalse = ifFalse;
     };
+
+    ~AST_If() {
+        delete condition;
+        delete ifTrue;
+        delete ifFalse;
+    }
 
 };
 

@@ -1,4 +1,3 @@
 #include "./AST/statements.h"
 
-extern AST_Block* parse(std::string &code);
-extern void destroy();
+extern AST_Block* parseAST(std::string &code);
