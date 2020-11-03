@@ -1,6 +1,8 @@
 #pragma once
 #include "./types.h"
 #include <unordered_map>
+#include <functional>
+#include <stdarg.h>
 
 class _MS_Array {
     public:
@@ -18,22 +20,20 @@ class Enviourment;
 void deleteEnv(Enviourment* env);
 
 class _MS_Function {
+    public:
     Enviourment* scope;
     std::vector<std::string> params;
-    AST_Block* body;
+    AST_NODE* body;
 
-    _MS_Function(AST_Block* bod, std::vector<std::string> &params) : params(params) {
-        body = bod;
-    };
-
-    _MS_Function(AST_Block* bod, std::vector<std::string> &params, Enviourment* env) : params(params) {
+    _MS_Function(AST_NODE* bod, std::vector<std::string> &params, Enviourment* env) : params(params) {
         body = bod;
         scope = env;
     };
+
 
     ~_MS_Function() {
         deleteEnv(scope);
         delete body;
     };
 
-};
+}; 

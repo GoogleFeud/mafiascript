@@ -2,6 +2,7 @@
 #include "primitives.h"
 #include <vector>
 
+
 class AST_Assign {
     public:
     std::string name;
@@ -37,12 +38,35 @@ class AST_Binary {
 
 };
 
+
 class AST_Function {
     public:
-    std::vector<AST_Var> params;
+    std::vector<std::string> params;
+    std::vector<std::string> captures;
+    AST_NODE* body;
 
-    AST_Function(std::vector<AST_Var> &params) : params(params) {
+    AST_Function(AST_List *params, AST_NODE* body) {
+        for (AST_NODE* node : params->entries) {
+           this->params.push_back(downcast<AST_Var*>(node)->value);
+        };
+        delete params;
+        this->body = body;
+    };
 
+        AST_Function(AST_List *params, AST_NODE* body, AST_List *captures) {
+        for (AST_NODE* node : params->entries) {
+           this->params.push_back(downcast<AST_Var*>(node)->value);
+        };
+        delete params;
+        for (AST_NODE* node : captures->entries) {
+           this->captures.push_back(downcast<AST_Var*>(node)->value);
+        };
+        delete captures;
+        this->body = body;
+    };
+
+    ~AST_Function() {
+        delete body;
     };
 
 };

@@ -61,6 +61,7 @@ THEN "=>"
 "," return COMMA;
 "?" return QUESTION_MARK;
 ":" return DOUBLE_DOT;
+"=>" return NEXT;
 
 ";" return END_OF_LINE;
 "\n" { ++lineNum; };

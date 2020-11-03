@@ -2,6 +2,7 @@
 
 #include <variant>
 
+
 enum AST_Types {
     MS_STRING,
     MS_NUMBER,

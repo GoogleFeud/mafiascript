@@ -6,6 +6,7 @@
 #include "./util.h"
 
 
+
 class Context {
     public:
     Enviourment* global = new Enviourment();
@@ -52,6 +53,17 @@ class Context {
                     realMap.insert({name->value, val});
                 };
                 return MS_VALUE {std::make_shared<_MS_Object>(realMap) };
+            };
+            case AST_Types::MS_FUNCTION: {
+                AST_Function* fn = downcast<AST_Function*>(node);
+                MS_Function msFunc = std::make_shared<_MS_Function>(fn->body, fn->params, this->global->extend());
+                if (fn->captures.size()) {
+                    for (std::string capture : fn->captures) {
+                        auto v = env->get(capture);
+                        msFunc->scope->define(capture, v);
+                    };
+                };
+                return MS_VALUE { msFunc };
             };
             case AST_Types::MS_VAR: {
                 AST_Var* id = downcast<AST_Var*>(node);
@@ -113,6 +125,17 @@ class Context {
             };
         default: throw std::runtime_error("Invalid AST type!");
     };
+    };
+
+    MS_VALUE callFunction(MS_Function &func, std::vector<MS_VALUE> params) {
+        int size = func->params.size();
+        Enviourment* newEnv = func->scope->extend();
+        for (int i=0; i < size; i++) {
+            newEnv->define(func->params[i], params[i]);
+        };
+        auto val = this->executeAST(func->body, newEnv);
+        delete newEnv;
+        return val;
     };
 
     ~Context() {

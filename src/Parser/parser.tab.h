@@ -84,8 +84,9 @@ extern int yydebug;
     DOUBLE_DOT = 285,              /* DOUBLE_DOT  */
     S_BRACKET_LEFT = 286,          /* S_BRACKET_LEFT  */
     S_BRACKET_RIGHT = 287,         /* S_BRACKET_RIGHT  */
-    END_OF_LINE = 288,             /* END_OF_LINE  */
-    NEG = 289                      /* NEG  */
+    NEXT = 288,                    /* NEXT  */
+    END_OF_LINE = 289,             /* END_OF_LINE  */
+    NEG = 290                      /* NEG  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -101,7 +102,7 @@ union YYSTYPE
     AST_List* list;
     AST_PairList* pairList;
 
-#line 105 "src/Parser/parser.tab.h"
+#line 106 "src/Parser/parser.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
