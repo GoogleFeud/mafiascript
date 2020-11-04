@@ -46,6 +46,7 @@ THEN "=>"
 
 "=" return ASSIGN;
 "==" return COMPARE;
+"!=" return NOT_EQUAL;
 "!" return NOT;
 "+" return PLUS;
 "-" return MINUS;

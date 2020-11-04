@@ -60,13 +60,36 @@ class AST_If {
 
 class AST_Loop {
     public:
-    AST_NODE condition;
-    std::optional<AST_NODE> before;
-    std::optional<AST_NODE> after;
+    AST_NODE* condition;
+    AST_NODE* body;
+    AST_NODE* before;
+    AST_NODE* after;
 
-    AST_Loop(AST_NODE &cond) : condition(cond) {};
-    AST_Loop(AST_NODE &cond, AST_NODE &after) : condition(cond), after(std::make_optional<AST_NODE>(after)) {};
-    AST_Loop(AST_NODE &cond, AST_NODE &before, AST_NODE &after) : condition(cond), before(std::make_optional<AST_NODE>(before)), after(std::make_optional<AST_NODE>(after)) {};
+    AST_Loop(AST_NODE* cond, AST_NODE* body) {
+        condition = cond;
+        this->body = body;
+    };
+
+    AST_Loop(AST_NODE* cond, AST_NODE* after, AST_NODE* body)  {
+        condition = cond;
+        this->after = after;
+        this->body = body;
+    };
+
+    AST_Loop(AST_NODE* before, AST_NODE* cond, AST_NODE* after, AST_NODE* body) {
+        condition = cond;
+        this->before = before;
+        this->after = after;
+        this->body = body;
+    };
+
+    ~AST_Loop() {
+        delete condition;
+        delete before;
+        delete after;
+        delete body;
+    };
+
 };
 
 class AST_Return {

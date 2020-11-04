@@ -5,6 +5,7 @@
 
 template <typename T>
 T downcast(MS_VALUE &exp) {
+    //std::cout<<"Downcast with val of type: "<<exp.index()<<std::endl;
     return std::get<T>(exp);
 };
 
@@ -46,5 +47,6 @@ MS_VALUE applyOperator(MS_VALUE &a, MS_VALUE &b, std::string &op) {
     else if (op == "*") return toNumber(a) * toNumber(b);
     else if (op == "/") return toNumber(a) / toNumber(b);
     else if (op == "==") return toNumber(a) == toNumber(b);
+    else if (op == "!=") return toNumber(a) != toNumber(b);
     return MS_VALUE { nullptr };
 };

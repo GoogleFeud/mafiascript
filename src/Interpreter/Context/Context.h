@@ -111,6 +111,18 @@ class Context {
                 }
                 return MS_VALUE { nullptr };
             };
+            case AST_Types::MS_LOOP: {
+                AST_Loop* loop = downcast<AST_Loop*>(node);
+                Enviourment* newEnv = env->extend();
+                if (loop->before) this->executeAST(loop->before, newEnv);
+                auto val = this->executeAST(loop->condition, newEnv);
+                while(!isFalsey(val)) {
+                    this->executeAST(loop->body, newEnv);
+                    if (loop->after) this->executeAST(loop->after, newEnv);
+                    val = this->executeAST(loop->condition, newEnv);
+                };
+                return MS_VALUE { nullptr };
+            };
             case AST_Types::MS_BLOCK: {
                 AST_Block* block = downcast<AST_Block*>(node);
                 for (AST_NODE* blockNode : block->nodes) {
