@@ -2,14 +2,19 @@
 #pragma once
 
 #include <iostream>
+#include <chrono>
+
 #include "../../Parser/index.h"
 #include "./util.h"
 
-
+struct ContextSettings {
+    float loopTimeout = 0;
+};
 
 class Context {
     public:
     Enviourment* global = new Enviourment();
+    ContextSettings settings;
     
     void run(std::string &code) {
         this->executeAST(new AST_NODE { parseAST(code) }, this->global);
@@ -20,6 +25,7 @@ class Context {
     };
 
     MS_VALUE executeAST(AST_NODE* node, Enviourment* env) {
+        if (node == NULL) return MS_VALUE { nullptr };
         switch(node->index()) {
             case AST_Types::MS_STRING: {
             AST_String* str = downcast<AST_String*>(node);
@@ -114,12 +120,19 @@ class Context {
             case AST_Types::MS_LOOP: {
                 AST_Loop* loop = downcast<AST_Loop*>(node);
                 Enviourment* newEnv = env->extend();
-                if (loop->before) this->executeAST(loop->before, newEnv);
-                auto val = this->executeAST(loop->condition, newEnv);
-                while(!isFalsey(val)) {
-                    this->executeAST(loop->body, newEnv);
-                    if (loop->after) this->executeAST(loop->after, newEnv);
-                    val = this->executeAST(loop->condition, newEnv);
+                this->executeAST(loop->before, newEnv);
+                if (this->settings.loopTimeout > 0) {
+                    auto start = std::chrono::high_resolution_clock::now();
+                   while(!isFalsey(this->executeAST(loop->condition, newEnv))) {
+                       this->executeAST(loop->body, newEnv);
+                       this->executeAST(loop->after, newEnv);
+                       if (std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - start).count() > this->settings.loopTimeout) throw std::runtime_error("Loop timeout exceeded.");
+                   };
+                } else {
+                    while(!isFalsey(this->executeAST(loop->condition, newEnv))) {
+                       this->executeAST(loop->body, newEnv);
+                       this->executeAST(loop->after, newEnv);
+                   };
                 };
                 return MS_VALUE { nullptr };
             };

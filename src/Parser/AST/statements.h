@@ -72,14 +72,16 @@ class AST_Loop {
 
     AST_Loop(AST_NODE* cond, AST_NODE* after, AST_NODE* body)  {
         condition = cond;
-        this->after = after;
+        if (body->index() == AST_Types::MS_BLOCK) downcast<AST_Block*>(body)->push(after);
+        else this->after = after;
         this->body = body;
     };
 
     AST_Loop(AST_NODE* before, AST_NODE* cond, AST_NODE* after, AST_NODE* body) {
         condition = cond;
         this->before = before;
-        this->after = after;
+        if (body->index() == AST_Types::MS_BLOCK) downcast<AST_Block*>(body)->push(after);
+        else this->after = after;
         this->body = body;
     };
 
