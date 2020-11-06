@@ -30,7 +30,6 @@ class _MS_Function {
         scope = env;
     };
 
-
     ~_MS_Function() {
         deleteEnv(scope);
         delete body;

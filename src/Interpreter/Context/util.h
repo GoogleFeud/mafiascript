@@ -70,10 +70,10 @@ bool isFalsey(const MS_VALUE &val) {
 
 
 float toNumber(MS_VALUE &a) {
-    //if (a.index() == MS_Types::T_STRING) std::cout<<*downcast<MS_String>(a);
     if (a.index() != MS_Types::T_NUMBER) throw std::runtime_error("Expected a number, instead got " + typeToString(a.index()));
     return downcast<float>(a);
 };
+
 
 MS_VALUE applyOperator(MS_VALUE &a, MS_VALUE &b, std::string &op) {
     if (op == "+") return toNumber(a) + toNumber(b);
