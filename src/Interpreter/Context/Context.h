@@ -124,14 +124,20 @@ class Context {
                 if (this->settings.loopTimeout > 0) {
                     auto start = std::chrono::high_resolution_clock::now();
                    while(!isFalsey(this->executeAST(loop->condition, newEnv))) {
-                       this->executeAST(loop->body, newEnv);
-                       this->executeAST(loop->after, newEnv);
+                       auto block = downcast<AST_Block*>(loop->body);
+                       for (AST_NODE* nd : block->nodes) {
+                          auto res = this->executeAST(nd, newEnv);
+                          if (res.index() != MS_Types::T_NULL && (nd->index() == AST_Types::MS_IF || nd->index() == AST_Types::MS_LOOP)) return res;
+                       };
                        if (std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - start).count() > this->settings.loopTimeout) throw std::runtime_error("Loop timeout exceeded.");
                    };
                 } else {
                     while(!isFalsey(this->executeAST(loop->condition, newEnv))) {
-                       this->executeAST(loop->body, newEnv);
-                       this->executeAST(loop->after, newEnv);
+                       auto block = downcast<AST_Block*>(loop->body);
+                       for (AST_NODE* nd : block->nodes) {
+                           auto res = this->executeAST(nd, newEnv);
+                          if (res.index() != MS_Types::T_NULL && (nd->index() == AST_Types::MS_IF || nd->index() == AST_Types::MS_LOOP)) return res;
+                       };
                    };
                 };
                 return MS_VALUE { nullptr };
@@ -144,9 +150,14 @@ class Context {
                         auto v = this->executeAST(ret->value, env);
                         return v;
                     };
-                    this->executeAST(blockNode, env);
+                    auto res = this->executeAST(blockNode, env);
+                    if (res.index() != MS_Types::T_NULL && (blockNode->index() == AST_Types::MS_IF || blockNode->index() == AST_Types::MS_LOOP)) return res;
                 };
                 return MS_VALUE { nullptr };
+            };
+            case AST_Types::MS_RETURN: {
+                AST_Return* rtrn = downcast<AST_Return*>(node);
+                return this->executeAST(rtrn->value, env);
             };
         default: throw std::runtime_error("Invalid AST type!");
     };

@@ -11,7 +11,7 @@ namespace MSTypes {
 
     MS_VALUE makeString(std::string str) {
         return MS_VALUE { std::make_shared<std::string>(str) };
-    };
+    }; 
 
     MS_VALUE makeBool(bool boolean) {
         return MS_VALUE {boolean};
@@ -23,23 +23,17 @@ namespace MSTypes {
 
     MS_VALUE makeNull() {
         return MS_VALUE {nullptr};
-    };
+    }; 
 
     MS_VALUE makeArray(std::vector<MS_VALUE> &vec) {
         return MS_VALUE { std::make_shared<_MS_Array>(vec) };
     };
 
-    MS_VALUE makeArray(std::vector<MS_VALUE> *vec) {
-        return MS_VALUE { std::make_shared<_MS_Array>(vec) };
-    };
 
     MS_VALUE makeObject(std::unordered_map<std::string, MS_VALUE> &obj) {
         return MS_VALUE { std::make_shared<_MS_Object>(obj) };
     }
 
-    MS_VALUE makeObject(std::unordered_map<std::string, MS_VALUE> *obj) {
-        return MS_VALUE { std::make_shared<_MS_Object>(obj) };
-    }
 
     MS_VALUE makeFunction(C_Function fn) {
         return MS_VALUE { fn };

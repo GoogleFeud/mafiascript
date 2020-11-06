@@ -63,7 +63,6 @@ class AST_Loop {
     AST_NODE* condition;
     AST_NODE* body;
     AST_NODE* before;
-    AST_NODE* after;
 
     AST_Loop(AST_NODE* cond, AST_NODE* body) {
         condition = cond;
@@ -72,23 +71,32 @@ class AST_Loop {
 
     AST_Loop(AST_NODE* cond, AST_NODE* after, AST_NODE* body)  {
         condition = cond;
-        if (body->index() == AST_Types::MS_BLOCK) downcast<AST_Block*>(body)->push(after);
-        else this->after = after;
-        this->body = body;
+        if (body->index() != AST_Types::MS_BLOCK) {
+          AST_Block* bl = new AST_Block(body);
+          bl->push(after);
+          this->body = new AST_NODE { bl };
+        } else {
+            downcast<AST_Block*>(body)->push(after);
+            this->body = body;
+        };
     };
 
     AST_Loop(AST_NODE* before, AST_NODE* cond, AST_NODE* after, AST_NODE* body) {
         condition = cond;
         this->before = before;
-        if (body->index() == AST_Types::MS_BLOCK) downcast<AST_Block*>(body)->push(after);
-        else this->after = after;
-        this->body = body;
+        if (body->index() != AST_Types::MS_BLOCK) {
+          AST_Block* bl = new AST_Block(body);
+          bl->push(after);
+          this->body = new AST_NODE { bl };
+        } else {
+            downcast<AST_Block*>(body)->push(after);
+            this->body = body;
+        };
     };
 
     ~AST_Loop() {
         delete condition;
         delete before;
-        delete after;
         delete body;
     };
 

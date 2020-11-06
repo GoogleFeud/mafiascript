@@ -116,7 +116,8 @@ LET ID { $$ = new AST_NODE { new AST_Declare($2, new AST_NODE { new AST_Null }) 
 | LET ID ASSIGN Expression {$$ = new AST_NODE { new AST_Declare($2, $4) }; };
 
 Return:
-RETURN Expression { $$ = new AST_NODE { new AST_Return($2) }; };
+RETURN { $$ = new AST_NODE { new AST_Return() }; };
+| RETURN Expression { $$ = new AST_NODE { new AST_Return($2) }; };
 
 
 Binary_Operation:
