@@ -52,12 +52,14 @@ float toNumber(MS_VALUE &a) {
 };
 
 
-MS_VALUE applyOperator(MS_VALUE &a, MS_VALUE &b, std::string &op) {
-    if (op == "+") return a + b;
-    else if (op == "-") return toNumber(a) - toNumber(b);
-    else if (op == "*") return toNumber(a) * toNumber(b);
-    else if (op == "/") return toNumber(a) / toNumber(b);
-    else if (op == "==") return a == b;
-    else if (op == "!=") return !(a == b);
-    return MS_VALUE { nullptr };
+MS_VALUE applyOperator(MS_VALUE &a, MS_VALUE &b, BINARY_Ops op) {
+    switch(op) {
+        case BINARY_Ops::OP_ADDITION: return a + b;
+        case BINARY_Ops::OP_SUBTRACTION: return toNumber(a) - toNumber(b);
+        case BINARY_Ops::OP_MULTIPLICATION: return toNumber(a) * toNumber(b);
+        case BINARY_Ops::OP_DIVISION: return toNumber(a) / toNumber(b);
+        case BINARY_Ops::OP_EQUAL: return a == b;
+        case BINARY_Ops::OP_NOT_EQUAL: return !(a == b); 
+        default: return MS_VALUE { nullptr };
+    };
 };

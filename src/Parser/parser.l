@@ -31,6 +31,8 @@ THEN "=>"
 "const" return CONST;
 "continue" return CONTINUE;
 "typeof" return TYPEOF;
+"and" return AND;
+"or" return OR;
 
 
 {NUMBER} { yylval.node = new AST_NODE { new AST_Number(atof(yytext)) }; return NUMBER; }
@@ -65,6 +67,8 @@ THEN "=>"
 "?" return QUESTION_MARK;
 ":" return DOUBLE_DOT;
 "=>" return NEXT;
+"&&" return AND;
+"||" return OR;
 
 ";" return END_OF_LINE;
 "\n" { ++lineNum; };

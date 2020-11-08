@@ -20,24 +20,51 @@ class AST_Assign {
 
 };
 
+
+enum BINARY_Ops {
+    OP_ADDITION,
+    OP_SUBTRACTION,
+    OP_MULTIPLICATION,
+    OP_DIVISION,
+    OP_POWER,
+    OP_EQUAL,
+    OP_NOT_EQUAL,
+};
+
 class AST_Binary {
     public:
     AST_NODE* left;
     AST_NODE* right;
-    std::string op;
+    BINARY_Ops op;
 
-    AST_Binary(AST_NODE *left, AST_NODE *right, std::string &op) : op(op) {
+    AST_Binary(AST_NODE *left, AST_NODE *right, BINARY_Ops op) {
         this->left = left;
         this->right = right;
+        this->op = op;
     };
 
     ~AST_Binary() {
-        delete this->left;
-        delete this->right;
+        delete left;
+        delete right;
     };
 
 };
 
+class AST_And {
+    public:
+    AST_NODE* left;
+    AST_NODE* right;
+
+    AST_And(AST_NODE *left, AST_NODE *right) {
+        this->left = left;
+        this->right = right;
+    };
+
+    ~AST_And() {
+        delete left;
+        delete right;
+    };
+};
 
 class AST_Function {
     public:
@@ -94,9 +121,9 @@ class AST_Ternery {
     };
 
     ~AST_Ternery() {
-        delete this->condition;
-        delete this->ifTrue;
-        delete this->ifFalse;
+        delete condition;
+        delete ifTrue;
+        delete ifFalse;
     };
     
 };

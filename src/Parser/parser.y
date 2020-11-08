@@ -24,7 +24,7 @@ AST_Block* prog;
 
 %token STRING NUMBER ID BOOL _NULL 
 %token IF ELSE RETURN LOOP LET CONST CONTINUE TYPEOF
-%token PLUS MINUS TIMES DIVIDE POWER COMPARE NOT ASSIGN NOT_EQUAL
+%token PLUS MINUS TIMES DIVIDE POWER COMPARE NOT ASSIGN NOT_EQUAL OR AND
 %token PARAN_LEFT PARAN_RIGHT COMMA BRACKET_LEFT BRACKET_RIGHT QUESTION_MARK DOUBLE_DOT S_BRACKET_LEFT S_BRACKET_RIGHT NEXT
 %token END_OF_LINE
 
@@ -74,8 +74,8 @@ VarList: %empty { $$ = new AST_List; };
 | VarList COMMA ID { $$->push($3); };
  
 
-Expression: Literal;
-| Binary_Operation;
+Expression: Binary_Operation;
+| Literal;
 | Assign;
 | Ternery;
 | Array;
@@ -120,14 +120,16 @@ RETURN { $$ = new AST_NODE { new AST_Return() }; };
 
 
 Binary_Operation:
-Expression PLUS Expression { std::string op = "+"; $$ = new AST_NODE { new AST_Binary($1, $3, op) };};
-| Expression MINUS Expression {std::string op = "-"; $$ = new AST_NODE { new AST_Binary($1, $3, op) };};
-| Expression TIMES Expression {std::string op = "*"; $$ = new AST_NODE { new AST_Binary($1, $3, op) };};
-| Expression DIVIDE Expression {std::string op = "/"; $$ = new AST_NODE { new AST_Binary($1, $3, op) };};
-| Expression POWER Expression {std::string op = "^"; $$ = new AST_NODE { new AST_Binary($1, $3, op) };};
+Expression PLUS Expression { $$ = new AST_NODE { new AST_Binary($1, $3, BINARY_Ops::OP_ADDITION) };};
+| Expression MINUS Expression { $$ = new AST_NODE { new AST_Binary($1, $3, BINARY_Ops::OP_SUBTRACTION) };};
+| Expression TIMES Expression { $$ = new AST_NODE { new AST_Binary($1, $3, BINARY_Ops::OP_MULTIPLICATION) };};
+| Expression DIVIDE Expression { $$ = new AST_NODE { new AST_Binary($1, $3, BINARY_Ops::OP_DIVISION) };};
+| Expression POWER Expression { $$ = new AST_NODE { new AST_Binary($1, $3, BINARY_Ops::OP_POWER) };};
 | PARAN_LEFT Expression PARAN_RIGHT {$$ = $2; };
-| Expression COMPARE Expression {std::string op = "=="; $$ = new AST_NODE { new AST_Binary($1, $3, op) }; };
-| Expression NOT_EQUAL Expression {std::string op = "!="; $$ = new AST_NODE { new AST_Binary($1, $3, op) }; };
+| Expression COMPARE Expression { $$ = new AST_NODE { new AST_Binary($1, $3, BINARY_Ops::OP_EQUAL) }; };
+| Expression NOT_EQUAL Expression { $$ = new AST_NODE { new AST_Binary($1, $3, BINARY_Ops::OP_NOT_EQUAL) }; };
+| Expression AND Expression {$$ = new AST_NODE { new AST_And($1, $3) }; };
+//| Expression OR Expression {$$ = new AST_NODE { new AST_Binary($1, $3, BINARY_Ops::OP_OR ) }; };
 
 Assign:
 ID ASSIGN Expression {$$ = new AST_NODE { new AST_Assign($1, $3) }; };

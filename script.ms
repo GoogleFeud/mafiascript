@@ -1,8 +1,10 @@
 
 let fn = (a, b) => {
-   if (a == 12) {
-      return "Hello ";
+   let res;
+   if (a == 12 && res = "Hello") {
+      return res;
    } else {
-      return "World";
+      res = "World";
+      return res;
    };
 };

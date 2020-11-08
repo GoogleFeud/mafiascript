@@ -93,6 +93,13 @@ class Context {
                 MS_VALUE b = this->executeAST(binary->right, env);
                 return applyOperator(a, b, binary->op);
             };
+            case AST_Types::MS_AND: {
+                AST_And* _and = downcast<AST_And*>(node);
+                //std::cout<<_and->left->index()<<std::endl<<_and->right->index()<<std::endl;
+                MS_VALUE left = this->executeAST(_and->left, env);
+                if (!isFalsey(left)) return this->executeAST(_and->right, env);
+                return false;
+            };
             case AST_Types::MS_DECLARE: {
                 AST_Declare* declare = downcast<AST_Declare*>(node);
                 auto val = this->executeAST(declare->value, env);
