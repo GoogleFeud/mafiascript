@@ -10,7 +10,7 @@ using namespace std::chrono;
 
 
 Context* eval() {
-std::ifstream ifs("script.ms");
+    std::ifstream ifs("script.ms");
     std::string code( (std::istreambuf_iterator<char>(ifs) ), (std::istreambuf_iterator<char>() ) );
     Context* ctx = new Context();
     ctx->settings.loopTimeout = 0;
@@ -30,15 +30,14 @@ int main()
     std::string key = "fn";
     MS_VALUE val = ctx->global->get(key);
     MS_Function fn = downcast<MS_Function>(val);
-    std::string keyMg = "magic";
-    MS_VALUE magicNum = MSTypes::makeNumber(15);
-    fn->scope->define(keyMg, magicNum);
     auto start = high_resolution_clock::now();
-    MS_VALUE res = ctx->callFunction(fn, std::vector {MSTypes::makeNumber(5), MSTypes::makeNumber(500)});
+    MS_VALUE res = ctx->callFunction(fn, std::vector {MSTypes::makeNumber(12), MSTypes::makeNumber(15)});
     auto stop = high_resolution_clock::now();
     auto duration = duration_cast<microseconds>(stop - start);
     std::cout << "Time function took: " << duration.count() << " microseconds!"<<std::endl;
-    std::cout<<downcast<float>(res)<<std::endl;
+    MS_String str = downcast<MS_String>(res);
+    std::cout<<*str<<std::endl;
+    std::cout<<str.use_count();
     system("pause");
     return 0;
 }

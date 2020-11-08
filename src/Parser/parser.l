@@ -39,8 +39,10 @@ THEN "=>"
 {NULL} {yylval.node = new AST_NODE { new AST_Null }; return _NULL; }
 {ID} { std::string res = std::string { yytext }; yylval.node = new AST_NODE { new AST_Var(res) }; return ID; }
 {STRING} {
-    std::string res = std::string(yytext); 
-    yylval.node = new AST_NODE { new AST_String(res) };
+    char* str = (char*)malloc(yyleng - 1);
+    memcpy(str, yytext + 1, yyleng - 2);
+    str[yyleng - 2] = 0;
+    yylval.node = new AST_NODE { new AST_String(std::string(str)) };
     return STRING; 
     }
 

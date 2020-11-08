@@ -9,6 +9,9 @@ class AST_String {
     public:
     std::string value;
     AST_String(std::string& val) : value(val) {};
+    AST_String(std::string val) {
+        value = val;
+    };
 };
 
 class AST_Number  {

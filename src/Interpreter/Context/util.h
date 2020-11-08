@@ -3,29 +3,6 @@
 #include "../Environment/Enviourment.h"
 
 
-template <typename T>
-T downcast(MS_VALUE &exp) {
-    //std::cout<<"Downcast with val of type: "<<exp.index()<<std::endl;
-    return std::get<T>(exp);
-};
-
-template <typename T>
-T downcast(MS_VALUE *exp) {
-    return std::get<T>(*exp);
-};
-
-template <typename T>
-T downcast(const MS_VALUE &exp) {
-    //std::cout<<"Downcast with val of type: "<<exp.index()<<std::endl;
-    return std::get<T>(exp);
-};
-
-template <typename T>
-T downcast(const MS_VALUE *exp) {
-    return std::get<T>(*exp);
-};
-
-
 bool isFalsey(MS_VALUE &val) {
     switch(val.index()) {
         case MS_Types::T_NULL: return true;
@@ -76,11 +53,11 @@ float toNumber(MS_VALUE &a) {
 
 
 MS_VALUE applyOperator(MS_VALUE &a, MS_VALUE &b, std::string &op) {
-    if (op == "+") return toNumber(a) + toNumber(b);
+    if (op == "+") return a + b;
     else if (op == "-") return toNumber(a) - toNumber(b);
     else if (op == "*") return toNumber(a) * toNumber(b);
     else if (op == "/") return toNumber(a) / toNumber(b);
-    else if (op == "==") return toNumber(a) == toNumber(b);
-    else if (op == "!=") return toNumber(a) != toNumber(b);
+    else if (op == "==") return a == b;
+    else if (op == "!=") return !(a == b);
     return MS_VALUE { nullptr };
 };

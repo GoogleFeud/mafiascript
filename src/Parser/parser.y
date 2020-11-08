@@ -74,20 +74,19 @@ VarList: %empty { $$ = new AST_List; };
 | VarList COMMA ID { $$->push($3); };
  
 
-Expression: Literal
-| Binary_Operation
-| Assign
-| Ternery
-| Array
-| Object
-| Function
-
+Expression: Literal;
+| Binary_Operation;
+| Assign;
+| Ternery;
+| Array;
+| Object;
+| Function;
 
 Statement: 
 If
-| Define
-| Return
-| Loop
+| Define;
+| Return;
+| Loop;
 
 Array:
 S_BRACKET_LEFT ExpressionList S_BRACKET_RIGHT {$$ = new AST_NODE { new AST_Array($2) }; };
