@@ -1,7 +1,7 @@
 
 let fn = (a, b) => {
-   let res;
-   if (a == 12 && res = "Hello") {
+   let res = "Hello";
+   if ((a == 12) and (b != 16)) {
       return res;
    } else {
       res = "World";

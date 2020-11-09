@@ -108,6 +108,20 @@ class AST_Call {
 
 };
 
+class AST_Typeof {
+    public:
+    AST_NODE* value;
+
+    AST_Typeof(AST_NODE* v) {
+        value = v;
+    };
+
+    ~AST_Typeof() {
+        delete value;
+    };
+
+};
+
 class AST_Ternery {
     public:
     AST_NODE* condition;

@@ -87,6 +87,11 @@ class Context {
                 if (!isFalsey(cond)) return this->executeAST(ternery->ifTrue, env);
                 return this->executeAST(ternery->ifFalse, env);
             };
+            case AST_Types::MS_TYPEOF: {
+                AST_Typeof* typeOf = downcast<AST_Typeof*>(node);
+                auto val = this->executeAST(typeOf->value, env);
+                return MS_VALUE { std::make_shared<std::string>(typeToString(val.index())) };
+            };
             case AST_Types::MS_BINARY: {
                 AST_Binary* binary = downcast<AST_Binary*>(node);
                 MS_VALUE a = this->executeAST(binary->left, env);

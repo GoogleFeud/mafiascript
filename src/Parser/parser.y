@@ -28,20 +28,24 @@ AST_Block* prog;
 %token PARAN_LEFT PARAN_RIGHT COMMA BRACKET_LEFT BRACKET_RIGHT QUESTION_MARK DOUBLE_DOT S_BRACKET_LEFT S_BRACKET_RIGHT NEXT
 %token END_OF_LINE
 
+%left IF ELSE RETURN LOOP LET CONST CONTINUE TYPEOF
+%left AND OR 
 %left PLUS MINUS
 %left TIMES DIVIDE
-%left NEG
-%right POWER
+%left COMAPRE NOT_EQUAL 
+%left ASSIGN
+%right POWER 
 
 %type <node> NUMBER STRING ID BOOL _NULL 
 %type <node> Expression
 %type <node> Statement
 %type <node> Line Any
 %type <node> Block
-%type <node> If Define Binary_Operation Assign Literal Ternery Array Object Function Return Loop LoopBeforeInit
+%type <node> If Define Binary_Operation Assign Literal Ternery Array Object Function Return Loop LoopBeforeInit And_Or Typeof
 %type <block> Input 
 %type <list> ExpressionList VarList
 %type <pairList> PairList
+
 
 %define parse.error verbose
 %start Input
@@ -74,13 +78,16 @@ VarList: %empty { $$ = new AST_List; };
 | VarList COMMA ID { $$->push($3); };
  
 
-Expression: Binary_Operation;
+Expression: 
+Binary_Operation;
+| And_Or;
 | Literal;
-| Assign;
 | Ternery;
 | Array;
 | Object;
 | Function;
+| Assign;
+| Typeof;
 
 Statement: 
 If
@@ -128,7 +135,10 @@ Expression PLUS Expression { $$ = new AST_NODE { new AST_Binary($1, $3, BINARY_O
 | PARAN_LEFT Expression PARAN_RIGHT {$$ = $2; };
 | Expression COMPARE Expression { $$ = new AST_NODE { new AST_Binary($1, $3, BINARY_Ops::OP_EQUAL) }; };
 | Expression NOT_EQUAL Expression { $$ = new AST_NODE { new AST_Binary($1, $3, BINARY_Ops::OP_NOT_EQUAL) }; };
-| Expression AND Expression {$$ = new AST_NODE { new AST_And($1, $3) }; };
+
+
+And_Or:
+Expression AND Expression {$$ = new AST_NODE { new AST_And($1, $3) }; };
 //| Expression OR Expression {$$ = new AST_NODE { new AST_Binary($1, $3, BINARY_Ops::OP_OR ) }; };
 
 Assign:
@@ -136,6 +146,9 @@ ID ASSIGN Expression {$$ = new AST_NODE { new AST_Assign($1, $3) }; };
 
 Ternery:
 Expression QUESTION_MARK Expression DOUBLE_DOT Expression { $$ = new AST_NODE { new AST_Ternery($1, $3, $5) }; };
+
+Typeof:
+TYPEOF Expression { $$ = new AST_NODE { new AST_Typeof($2) }; };
 
 LoopBeforeInit:
 Define { $$ = $1; };
