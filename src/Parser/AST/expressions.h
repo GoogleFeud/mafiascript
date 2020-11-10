@@ -29,6 +29,11 @@ enum BINARY_Ops {
     OP_POWER,
     OP_EQUAL,
     OP_NOT_EQUAL,
+    OP_GREATER_THAN,
+    OP_GREATER_OR_EQUAL,
+    OP_LESS_THAN,
+    OP_LESS_OR_EQUAL,
+    OP_MODULO
 };
 
 class AST_Binary {
@@ -66,6 +71,23 @@ class AST_And {
     };
 };
 
+class AST_Or {
+    public:
+    AST_NODE* left;
+    AST_NODE* right;
+
+    AST_Or(AST_NODE *left, AST_NODE *right) {
+        this->left = left;
+        this->right = right;
+    };
+
+    ~AST_Or() {
+        delete left;
+        delete right;
+    };
+
+};
+
 class AST_Function {
     public:
     std::vector<std::string> params;
@@ -100,12 +122,18 @@ class AST_Function {
 
 class AST_Call {
     public:
-    std::vector<AST_NODE> params;
-    AST_Var name;
+    AST_List* params;
+    std::string name;
 
-    AST_Call(std::vector<AST_NODE> &params, AST_Var& name) : params(params), name(name) {
+    AST_Call(AST_List* params, AST_NODE* name) {
+        this->name = downcast<AST_Var*>(name)->value;
+        delete name;
+        this->params = params;
     };
 
+    ~AST_Call() {
+        delete params;
+    }
 };
 
 class AST_Typeof {

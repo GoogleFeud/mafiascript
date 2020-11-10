@@ -34,9 +34,7 @@ class Enviourment {
     void set(std::string &key, MS_VALUE val) {
         Enviourment* env = this->lookup(key);
         if (!env) throw std::runtime_error(key + " is not defined!");
-       //auto oldVal = env->values[key];
-       //if (oldVal == val) return;
-       env->unsafeSet(key, val);
+        env->unsafeSet(key, val);
     };
 
     void unsafeSet(std::string &key, MS_VALUE &val) {

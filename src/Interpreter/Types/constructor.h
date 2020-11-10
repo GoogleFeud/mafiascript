@@ -35,8 +35,8 @@ namespace MSTypes {
     }
 
 
-    MS_VALUE makeFunction(C_Function fn) {
-        return MS_VALUE { fn };
+    MS_VALUE makeFunction(MS_VALUE (*fn)(std::vector<MS_VALUE>, Enviourment* env)) {
+        return MS_VALUE { std::make_shared<_C_Function>(fn) };
     };
 
 };

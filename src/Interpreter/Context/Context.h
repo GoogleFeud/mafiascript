@@ -92,6 +92,24 @@ class Context {
                 auto val = this->executeAST(typeOf->value, env);
                 return MS_VALUE { std::make_shared<std::string>(typeToString(val.index())) };
             };
+            case AST_Types::MS_CALL: {
+                AST_Call* call = downcast<AST_Call*>(node);
+                MS_VALUE functionObj = env->get(call->name);
+                if (functionObj.index() == MS_Types::T_FUNCTION) {
+                    std::vector<MS_VALUE> paramVals;
+                    for (AST_NODE* val : call->params->entries) {
+                        paramVals.push_back(this->executeAST(val, env));
+                    };
+                    return this->callFunction(functionObj, paramVals);
+                } else if (functionObj.index() == MS_Types::C_FUNCTION) {
+                    C_Function fn = downcast<C_Function>(functionObj);
+                    std::vector<MS_VALUE> paramVals;
+                    for (AST_NODE* val : call->params->entries) {
+                        paramVals.push_back(this->executeAST(val, env));
+                    };
+                    return fn->fn(paramVals, env);
+                } else throw std::runtime_error("Cannot call a " + typeToString(functionObj.index()));
+            };
             case AST_Types::MS_BINARY: {
                 AST_Binary* binary = downcast<AST_Binary*>(node);
                 MS_VALUE a = this->executeAST(binary->left, env);
@@ -100,10 +118,15 @@ class Context {
             };
             case AST_Types::MS_AND: {
                 AST_And* _and = downcast<AST_And*>(node);
-                //std::cout<<_and->left->index()<<std::endl<<_and->right->index()<<std::endl;
                 MS_VALUE left = this->executeAST(_and->left, env);
                 if (!isFalsey(left)) return this->executeAST(_and->right, env);
                 return false;
+            };
+            case AST_Types::MS_OR: {
+                AST_Or* _or = downcast<AST_Or*>(node);
+                MS_VALUE left = this->executeAST(_or->left, env);
+                if (isFalsey(left)) return this->executeAST(_or->right, env);
+                return left;
             };
             case AST_Types::MS_DECLARE: {
                 AST_Declare* declare = downcast<AST_Declare*>(node);
@@ -175,7 +198,19 @@ class Context {
     };
     };
 
-    MS_VALUE callFunction(MS_Function &func, std::vector<MS_VALUE> params) {
+    MS_VALUE callFunction(MS_Function &func, std::vector<MS_VALUE> &params) {
+        int size = func->params.size();
+        Enviourment* newEnv = func->scope->extend();
+        for (int i=0; i < size; i++) {
+            newEnv->define(func->params[i], params[i]);
+        };
+        auto val = this->executeAST(func->body, newEnv);
+        delete newEnv;
+        return val;
+    };
+
+    MS_VALUE callFunction(MS_VALUE &fnObj, std::vector<MS_VALUE> &params) {
+        MS_Function func = downcast<MS_Function>(fnObj);
         int size = func->params.size();
         Enviourment* newEnv = func->scope->extend();
         for (int i=0; i < size; i++) {

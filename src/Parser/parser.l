@@ -69,7 +69,12 @@ THEN "=>"
 "=>" return NEXT;
 "&&" return AND;
 "||" return OR;
-
+">" return GREATER_THAN;
+">=" return GREATER_OR_EQUAL;
+"<" return LESS_THAN;
+"<=" return LESS_OR_EQUAL;
+"%" return MODULO;
+ 
 ";" return END_OF_LINE;
 "\n" { ++lineNum; };
 %%

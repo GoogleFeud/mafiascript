@@ -1,6 +1,7 @@
 
 #pragma once
 #include "../Environment/Enviourment.h"
+#include <tgmath.h>
 
 
 bool isFalsey(MS_VALUE &val) {
@@ -52,7 +53,7 @@ float toNumber(MS_VALUE &a) {
 };
 
 
-MS_VALUE applyOperator(MS_VALUE &a, MS_VALUE &b, BINARY_Ops op) {
+MS_VALUE applyOperator(MS_VALUE &a, MS_VALUE &b, BINARY_Ops &op) {
     switch(op) {
         case BINARY_Ops::OP_ADDITION: return a + b;
         case BINARY_Ops::OP_SUBTRACTION: return toNumber(a) - toNumber(b);
@@ -60,6 +61,11 @@ MS_VALUE applyOperator(MS_VALUE &a, MS_VALUE &b, BINARY_Ops op) {
         case BINARY_Ops::OP_DIVISION: return toNumber(a) / toNumber(b);
         case BINARY_Ops::OP_EQUAL: return a == b;
         case BINARY_Ops::OP_NOT_EQUAL: return !(a == b); 
+        case BINARY_Ops::OP_GREATER_THAN: return toNumber(a) > toNumber(b);
+        case BINARY_Ops::OP_GREATER_OR_EQUAL: return toNumber(a) >= toNumber(b);
+        case BINARY_Ops::OP_LESS_THAN: return toNumber(a) < toNumber(b);
+        case BINARY_Ops::OP_LESS_OR_EQUAL: return toNumber(a) <= toNumber(b);
+        case BINARY_Ops::OP_MODULO: return std::fmod(toNumber(a), toNumber(b));
         default: return MS_VALUE { nullptr };
     };
 };

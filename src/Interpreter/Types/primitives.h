@@ -16,6 +16,7 @@ class _MS_Object {
     _MS_Object(std::unordered_map<std::string, MS_VALUE> &values) : entries(values) {};
 };
 
+
 class Enviourment;
 void deleteEnv(Enviourment* env);
 
@@ -36,3 +37,13 @@ class _MS_Function {
     };
 
 }; 
+
+class _C_Function {
+    public:
+    MS_VALUE (*fn)(std::vector<MS_VALUE>, Enviourment* env);
+
+    _C_Function(MS_VALUE (*f)(std::vector<MS_VALUE>, Enviourment* env)) {
+        fn = f;
+    };
+
+};
