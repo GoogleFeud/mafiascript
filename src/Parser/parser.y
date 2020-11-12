@@ -167,6 +167,7 @@ LOOP PARAN_LEFT LoopBeforeInit COMMA Expression COMMA Expression PARAN_RIGHT Any
 
 Call:
 ID PARAN_LEFT ExpressionList PARAN_RIGHT { $$ = new AST_NODE { new AST_Call($3, $1) }; };
+| Call PARAN_LEFT ExpressionList PARAN_RIGHT { $$ = new AST_NODE { new AST_Call($3, $1) }; };
 
 Accessor:
 ID DOT ID {$$ = new AST_NODE { new AST_Accessor($1, $3) }; };

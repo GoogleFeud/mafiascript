@@ -1,6 +1,6 @@
  
 let fibonacci = (n) => {
-   if (n <= 2) return 1;
+   if (n <= 1) return 1;
    return fibonacci(n - 1) + fibonacci(n - 2);
 };
 
@@ -13,10 +13,16 @@ let fizzbuzz = (n) => {
    };
 }; 
 
+let fnThatReturnsFn = () => {
+   let a = 3000;
+   return [a](b) => a + 35 + b;
+};
+
 let fn = (a) => {
-   //fizzbuzz(100);
-   let myObj = {
-      "a": "Welp!"
+   fizzbuzz(100);
+   let obj = {
+      "a": 5
    };
-   return myObj.a;
+   print(fnThatReturnsFn()(1));
+   return fibonacci(a);
 };

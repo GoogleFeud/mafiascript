@@ -1,5 +1,5 @@
 #pragma once
-#include "../Types/primitives.h"
+#include "../Types/types.h"
 #include <stdexcept>
 
 class Enviourment {
@@ -20,24 +20,24 @@ class Enviourment {
         return NULL;
     }
 
-    MS_VALUE get(std::string &key) {
+    MS_POINTER get(std::string &key) {
         if (this->values.count(key)) return this->values[key];
         if (this->parent) return this->parent->get(key);
         throw std::runtime_error(key + " is not defined!");
     }
 
-    void define(std::string &key, MS_VALUE &val) {
+    void define(std::string &key, MS_POINTER &val) {
         if (this->lookup(key)) throw std::runtime_error(key + " is already defined!");
-        this->values.insert({key, val});
+        this->values[key] = val;
     };
 
-    void set(std::string &key, MS_VALUE val) {
+    void set(std::string &key, MS_POINTER val) {
         Enviourment* env = this->lookup(key);
         if (!env) throw std::runtime_error(key + " is not defined!");
         env->unsafeSet(key, val);
     };
 
-    void unsafeSet(std::string &key, MS_VALUE &val) {
+    void unsafeSet(std::string &key, MS_POINTER &val) {
         this->values[key] = val;
     };
 
@@ -51,7 +51,7 @@ class Enviourment {
     }
 
     private:
-    std::unordered_map<std::string, MS_VALUE> values; 
+    std::unordered_map<std::string, MS_POINTER> values; 
 };
 
 void deleteEnv(Enviourment* env) {

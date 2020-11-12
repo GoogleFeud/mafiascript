@@ -123,11 +123,10 @@ class AST_Function {
 class AST_Call {
     public:
     AST_List* params;
-    std::string name;
+    AST_NODE* obj;
 
-    AST_Call(AST_List* params, AST_NODE* name) {
-        this->name = downcast<AST_Var*>(name)->value;
-        delete name;
+    AST_Call(AST_List* params, AST_NODE* obj) {
+        this->obj = obj;
         this->params = params;
     };
 
