@@ -169,3 +169,29 @@ class AST_Ternery {
     };
     
 };
+
+class AST_Accessor {
+    public:
+    std::string start;
+    std::vector<AST_NODE*> path;
+
+    AST_Accessor(AST_NODE* start) {
+        this->start = downcast<AST_Var*>(start)->value;
+    };
+
+    AST_Accessor(AST_NODE* start, AST_NODE* first) {
+        this->start = downcast<AST_Var*>(start)->value;
+        this->path.push_back(first);
+    };
+
+    void push(AST_NODE* p) {
+        this->path.push_back(p);
+    };
+
+    ~AST_Accessor() {
+        for (AST_NODE* node : path) {
+            delete node;
+        };
+    };
+
+};

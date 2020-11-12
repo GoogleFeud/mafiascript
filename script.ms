@@ -14,6 +14,9 @@ let fizzbuzz = (n) => {
 }; 
 
 let fn = (a) => {
-   fizzbuzz(100);
-   return "Welp!";
+   //fizzbuzz(100);
+   let myObj = {
+      "a": "Welp!"
+   };
+   return myObj.a;
 };

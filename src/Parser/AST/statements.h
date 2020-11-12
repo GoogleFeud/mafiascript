@@ -115,11 +115,20 @@ class AST_Return {
 
 class AST_Continue {
     public:
-    AST_NODE execute;
+    AST_NODE* execute;
+
     AST_Continue() {
-        this->execute = AST_NODE { new AST_Null };
+        this->execute = NULL;
     };
-    AST_Continue(AST_NODE &exec) : execute(exec) {};
+
+    AST_Continue(AST_NODE* exec) {
+        execute = exec;
+    };
+
+    ~AST_Continue() {
+        delete execute;
+    };
+
 };
 
    

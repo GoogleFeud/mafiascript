@@ -74,6 +74,8 @@ THEN "=>"
 "<" return LESS_THAN;
 "<=" return LESS_OR_EQUAL;
 "%" return MODULO;
+"." return DOT;
+"//".*  {};
  
 ";" return END_OF_LINE;
 "\n" { ++lineNum; };

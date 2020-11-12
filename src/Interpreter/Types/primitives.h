@@ -4,18 +4,6 @@
 #include <functional>
 #include <stdarg.h>
 
-class _MS_Array {
-    public:
-    std::vector<MS_VALUE> entries;
-    _MS_Array(std::vector<MS_VALUE> &values) : entries(values) {};
-};
-
-class _MS_Object {
-    public:
-    std::unordered_map<std::string, MS_VALUE> entries;
-    _MS_Object(std::unordered_map<std::string, MS_VALUE> &values) : entries(values) {};
-};
-
 
 class Enviourment;
 void deleteEnv(Enviourment* env);
@@ -46,4 +34,26 @@ class _C_Function {
         fn = f;
     };
 
+};
+
+
+class _MS_Array {
+    public:
+    std::vector<MS_VALUE> entries;
+    std::unordered_map<std::string, MS_VALUE> properties;
+    _MS_Array(std::vector<MS_VALUE> &values) : entries(values) {
+    };
+
+    MS_VALUE push(std::vector<MS_VALUE> vals, Enviourment* env) {
+        for (MS_VALUE val : vals) {
+            this->entries.push_back(val);
+        };
+        return MS_VALUE { (float)this->entries.size() };
+    };
+};
+
+class _MS_Object {
+    public:
+    std::unordered_map<std::string, MS_VALUE> properties;
+    _MS_Object(std::unordered_map<std::string, MS_VALUE> &values) : properties(values) {};
 };

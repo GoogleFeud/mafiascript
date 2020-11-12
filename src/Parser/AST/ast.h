@@ -18,6 +18,7 @@ enum AST_Types {
     MS_FUNCTION,
     MS_CALL,
     MS_TERNERY,
+    MS_ACCESSOR,
     MS_TYPEOF,
     MS_DECLARE,
     MS_IF,
@@ -49,8 +50,9 @@ class AST_Declare;
 class AST_And;
 class AST_Or;
 class AST_Typeof;
+class AST_Accessor;
 
-using AST_NODE = std::variant<AST_String*, AST_Number*, AST_Bool*, AST_Null*, AST_Array*, AST_Object*, AST_Var*, AST_Binary*, AST_And*, AST_Or*, AST_Assign*, AST_Function*, AST_Call*, AST_Ternery*, AST_Typeof*, AST_Declare*, AST_If*, AST_Loop*, AST_Return*, AST_Continue*, AST_Block*>;
+using AST_NODE = std::variant<AST_String*, AST_Number*, AST_Bool*, AST_Null*, AST_Array*, AST_Object*, AST_Var*, AST_Binary*, AST_And*, AST_Or*, AST_Assign*, AST_Function*, AST_Call*, AST_Ternery*, AST_Accessor*, AST_Typeof*, AST_Declare*, AST_If*, AST_Loop*, AST_Return*, AST_Continue*, AST_Block*>;
 
 template <typename T>
 T downcast(AST_NODE &exp) {

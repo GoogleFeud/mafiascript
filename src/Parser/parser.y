@@ -25,7 +25,7 @@ AST_Block* prog;
 %token STRING NUMBER ID BOOL _NULL 
 %token IF ELSE RETURN LOOP LET CONST CONTINUE TYPEOF
 %token PLUS MINUS TIMES DIVIDE POWER COMPARE NOT ASSIGN NOT_EQUAL OR AND GREATER_THAN GREATER_OR_EQUAL LESS_THAN LESS_OR_EQUAL MODULO
-%token PARAN_LEFT PARAN_RIGHT COMMA BRACKET_LEFT BRACKET_RIGHT QUESTION_MARK DOUBLE_DOT S_BRACKET_LEFT S_BRACKET_RIGHT NEXT
+%token PARAN_LEFT PARAN_RIGHT COMMA BRACKET_LEFT BRACKET_RIGHT QUESTION_MARK DOUBLE_DOT S_BRACKET_LEFT S_BRACKET_RIGHT NEXT DOT
 %token END_OF_LINE
 
 %left IF ELSE RETURN LOOP LET CONST CONTINUE TYPEOF
@@ -41,7 +41,7 @@ AST_Block* prog;
 %type <node> Statement
 %type <node> Line Any
 %type <node> Block
-%type <node> If Define Binary_Operation Assign Literal Ternery Array Object Function Return Loop LoopBeforeInit And_Or Typeof Call
+%type <node> If Define Binary_Operation Assign Literal Ternery Array Object Function Return Loop LoopBeforeInit And_Or Typeof Call Accessor
 %type <block> Input 
 %type <list> ExpressionList VarList
 %type <pairList> PairList
@@ -80,6 +80,7 @@ VarList: %empty { $$ = new AST_List; };
 
 Expression: 
 Binary_Operation;
+| Accessor;
 | And_Or;
 | Literal;
 | Ternery;
@@ -110,8 +111,8 @@ Function:
 
 Literal:
 NUMBER
-| STRING
 | ID
+| STRING
 | BOOL
 | _NULL
 
@@ -166,6 +167,14 @@ LOOP PARAN_LEFT LoopBeforeInit COMMA Expression COMMA Expression PARAN_RIGHT Any
 
 Call:
 ID PARAN_LEFT ExpressionList PARAN_RIGHT { $$ = new AST_NODE { new AST_Call($3, $1) }; };
+
+Accessor:
+ID DOT ID {$$ = new AST_NODE { new AST_Accessor($1, $3) }; };
+| ID S_BRACKET_LEFT Expression S_BRACKET_RIGHT {$$ = new AST_NODE { new AST_Accessor($1, $3) }; };
+| ID DOT Call {$$ = new AST_NODE { new AST_Accessor($1, $3) }; };
+| Accessor DOT ID { downcast<AST_Accessor*>($$)->push($3); };
+| Accessor S_BRACKET_LEFT Expression S_BRACKET_RIGHT { downcast<AST_Accessor*>($$)->push($3); };
+| Accessor DOT Call { downcast<AST_Accessor*>($$)->push($3); };
 
 %%
 
