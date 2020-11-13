@@ -5,12 +5,11 @@
 
 class AST_Assign {
     public:
-    std::string name;
+    AST_NODE* obj;
     AST_NODE* value;
 
     AST_Assign(AST_NODE* name, AST_NODE *value) {
-        this->name = downcast<AST_Var*>(name)->value;
-        delete name;
+        obj = name;
         this->value = value;
     };
 
@@ -169,17 +168,18 @@ class AST_Ternery {
     
 };
 
+
 class AST_Accessor {
     public:
-    std::string start;
+    AST_NODE* start;
     std::vector<AST_NODE*> path;
 
     AST_Accessor(AST_NODE* start) {
-        this->start = downcast<AST_Var*>(start)->value;
+        this->start = start;
     };
 
     AST_Accessor(AST_NODE* start, AST_NODE* first) {
-        this->start = downcast<AST_Var*>(start)->value;
+        this->start = start;
         this->path.push_back(first);
     };
 

@@ -104,6 +104,15 @@ class AST_Var {
     AST_Var(std::string &val) : value(val) {};
 };
 
+class AST_Access_Point {
+    public:
+    std::string value;
+    AST_Access_Point(AST_NODE* val) {
+        value = downcast<AST_Var*>(val)->value;
+        delete val;
+    };
+};
+
 
 class AST_Null {};
 

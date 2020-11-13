@@ -95,10 +95,18 @@ class MS_VALUE {
         return value.index();
     };
 
+    void set(MS_POINTER &val) {
+        value = val->value;
+    };
+
     template<typename T>
     T downcast() {
         return std::get<T>(value);
     }
+
+    bool isNull() {
+        return value.index() == MS_Types::T_NULL;
+    };
 
     const std::string typeToString() {
         switch (value.index()) {
@@ -129,6 +137,7 @@ class MS_VALUE {
                 bool val = std::get<bool>(value);
                 return (val) ? "true":"false";
             };
+            case MS_Types::T_NULL: return "null";
             default: throw std::runtime_error("Type " + typeToString() + " cannot be converted to a string!");
         };
     };
@@ -189,6 +198,31 @@ class MS_VALUE {
     static MS_POINTER make(C_Function fn) {
         return std::make_shared<MS_VALUE>(fn);
     }
+
+    MS_POINTER operator[](MS_POINTER &inside) {
+        if (inside->index() == MS_Types::T_NUMBER && value.index() == MS_Types::T_ARRAY) {
+            MS_Array* arr = downcast<MS_Array*>();
+            float index =  inside->downcast<float>();
+            if (index > arr->entries.size()) {
+                auto null = MS_VALUE::make();
+                arr->entries[index] = null;
+                return null;
+            }
+            return arr->entries[index];
+        }
+        std::string propName = inside->toString();
+        if (!this->properties.count(propName)) return MS_VALUE::make();
+        return this->properties[propName];
+    };
+
+    MS_POINTER operator[](std::string &propName) {
+        if (!this->properties.count(propName)) return MS_VALUE::make();
+        return this->properties[propName];
+    };
+
+    bool hasProperty(std::string &propName) {
+        return this->properties.count(propName);
+    };
 
 };
 

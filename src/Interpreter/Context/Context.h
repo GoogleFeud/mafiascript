@@ -92,21 +92,27 @@ public:
             AST_Var *id = downcast<AST_Var *>(node);
             return env->get(id->value);
         };
-   /*     case AST_Types::MS_ACCESSOR: {
+        case AST_Types::MS_ACCESSOR: {
             AST_Accessor *access = downcast<AST_Accessor*>(node);
-            MS_POINTER start = env->get(access->start);
-            if (start->index() != MS_Types::T_OBJECT && start->index() != MS_Types::T_ARRAY) throw std::runtime_error("Variabole " + access->start + " has no properties");
-            MS_VALUE last;
-            for (AST_NODE* val : access->path) {
-            };
-            std::cout<<last.index();
+            MS_POINTER last = this->executeAST(access->start, env);
+            for (AST_NODE* el : access->path) {
+                if (el->index() == AST_Types::MS_ACCESS_POINT) {
+                    auto propKey = downcast<AST_Access_Point*>(el)->value;
+                    if (last->isNull()) throw std::runtime_error("Cannot read property " + propKey + " of null");
+                    last = (*last)[propKey];
+                } else {
+                    auto propKey = this->executeAST(el, env);
+                     if (last->isNull()) throw std::runtime_error("Cannot read property " + propKey->toString() + " of null");
+                     last = (*last)[propKey];
+                };
+            }; 
             return last;
-        }; */
+        }; 
         case AST_Types::MS_ASSIGN:
         {
             AST_Assign *assign = downcast<AST_Assign *>(node);
             auto val = this->executeAST(assign->value, env);
-            env->set(assign->name, val);
+            this->executeAST(assign->obj, env)->set(val);
             return val;
         };
         case AST_Types::MS_TERNERY:

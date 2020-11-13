@@ -149,6 +149,7 @@ Expression AND Expression {$$ = new AST_NODE { new AST_And($1, $3) }; };
 
 Assign:
 ID ASSIGN Expression {$$ = new AST_NODE { new AST_Assign($1, $3) }; };
+| Accessor ASSIGN Expression {$$ = new AST_NODE { new AST_Assign($1, $3) }; };
 
 Ternery:
 Expression QUESTION_MARK Expression DOUBLE_DOT Expression { $$ = new AST_NODE { new AST_Ternery($1, $3, $5) }; };
@@ -168,14 +169,15 @@ LOOP PARAN_LEFT LoopBeforeInit COMMA Expression COMMA Expression PARAN_RIGHT Any
 Call:
 ID PARAN_LEFT ExpressionList PARAN_RIGHT { $$ = new AST_NODE { new AST_Call($3, $1) }; };
 | Call PARAN_LEFT ExpressionList PARAN_RIGHT { $$ = new AST_NODE { new AST_Call($3, $1) }; };
+| Accessor PARAN_LEFT ExpressionList PARAN_RIGHT { $$ = new AST_NODE { new AST_Call($3, $1) }; };
 
 Accessor:
-ID DOT ID {$$ = new AST_NODE { new AST_Accessor($1, $3) }; };
-| ID S_BRACKET_LEFT Expression S_BRACKET_RIGHT {$$ = new AST_NODE { new AST_Accessor($1, $3) }; };
-| ID DOT Call {$$ = new AST_NODE { new AST_Accessor($1, $3) }; };
-| Accessor DOT ID { downcast<AST_Accessor*>($$)->push($3); };
+Literal DOT ID {$$ = new AST_NODE { new AST_Accessor($1, new AST_NODE { new AST_Access_Point($3) }) }; };
+| Literal S_BRACKET_LEFT Expression S_BRACKET_RIGHT {$$ = new AST_NODE { new AST_Accessor($1, $3) }; };
+| Call DOT ID {$$ = new AST_NODE { new AST_Accessor($1, new AST_NODE { new AST_Access_Point($3) }) }; };
+| Call S_BRACKET_LEFT Expression S_BRACKET_RIGHT {$$ = new AST_NODE { new AST_Accessor($1, $3) }; };
+| Accessor DOT ID { downcast<AST_Accessor*>($$)->push(new AST_NODE { new AST_Access_Point($3) }); };
 | Accessor S_BRACKET_LEFT Expression S_BRACKET_RIGHT { downcast<AST_Accessor*>($$)->push($3); };
-| Accessor DOT Call { downcast<AST_Accessor*>($$)->push($3); };
 
 %%
 
