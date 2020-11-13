@@ -23,10 +23,12 @@ let fizzbuzz2 = (n) => {
    return rel;
 };
 
-
+let test = (thing) => {
+   return thing?15:10;
+};
 
 let fn = (a) => {
    if (true) "aaaa";
-   let res = fizzbuzz2(100);
+   let res = fizzbuzz1(100);
    return res;
 };

@@ -29,12 +29,12 @@ AST_Block* prog;
 %token END_OF_LINE
 
 %left IF ELSE RETURN LOOP LET CONST CONTINUE TYPEOF
+%left ASSIGN
 %left AND OR 
+%left COMAPRE NOT_EQUAL GREATER_THAN GREATER_OR_EQUAL LESS_THAN LESS_OR_EQUAL 
 %left PLUS MINUS
 %left TIMES DIVIDE
-%right COMAPRE NOT_EQUAL 
-%left ASSIGN
-%left GREATER_THAN GREATER_OR_EQUAL LESS_THAN LESS_OR_EQUAL MODULO
+%left MODULO
 %right POWER 
 
 %type <node> NUMBER STRING ID BOOL _NULL 
@@ -68,6 +68,7 @@ Any: Expression { $$ = $1; };
 
 ExpressionList: %empty { $$ = new AST_List; };
 | Expression { $$ = new AST_List($1); };
+| And_Or { $$ = new AST_List($1); };
 | ExpressionList COMMA Expression { $$->push($3); };
 
 PairList: %empty {$$ = new AST_PairList; };
@@ -80,8 +81,8 @@ VarList: %empty { $$ = new AST_List; };
  
 
 Expression: 
-Binary_Operation;
-| Boolean_Operation;
+Boolean_Operation;
+| Binary_Operation;
 | Accessor;
 | Literal;
 | Ternery;
@@ -90,6 +91,7 @@ Binary_Operation;
 | Function;
 | Call;
 | Typeof;
+| PARAN_LEFT Expression PARAN_RIGHT {$$ = $2; };
 
 Statement: 
 If
@@ -140,14 +142,12 @@ Boolean_Operation:
 | Expression LESS_THAN Expression { $$ = new AST_NODE { new AST_Binary($1, $3, BINARY_Ops::OP_LESS_THAN) }; };
 | Expression LESS_OR_EQUAL Expression { $$ = new AST_NODE { new AST_Binary($1, $3, BINARY_Ops::OP_LESS_OR_EQUAL) }; };
 
-
 Binary_Operation:
 Expression PLUS Expression { $$ = new AST_NODE { new AST_Binary($1, $3, BINARY_Ops::OP_ADDITION) };};
 | Expression MINUS Expression { $$ = new AST_NODE { new AST_Binary($1, $3, BINARY_Ops::OP_SUBTRACTION) };};
 | Expression TIMES Expression { $$ = new AST_NODE { new AST_Binary($1, $3, BINARY_Ops::OP_MULTIPLICATION) };};
 | Expression DIVIDE Expression { $$ = new AST_NODE { new AST_Binary($1, $3, BINARY_Ops::OP_DIVISION) };};
 | Expression POWER Expression { $$ = new AST_NODE { new AST_Binary($1, $3, BINARY_Ops::OP_POWER) };};
-| PARAN_LEFT Expression PARAN_RIGHT {$$ = $2; };
 | Expression MODULO Expression { $$ = new AST_NODE { new AST_Binary($1, $3, BINARY_Ops::OP_MODULO) }; };
 
 Binary_Statement:
