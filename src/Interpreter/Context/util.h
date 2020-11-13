@@ -24,6 +24,11 @@ MS_POINTER applyOperator(MS_POINTER &a, MS_POINTER &b, BINARY_Ops &op) {
         case BINARY_Ops::OP_LESS_THAN: return MS_VALUE::make(toNumber(a) < toNumber(b));
         case BINARY_Ops::OP_LESS_OR_EQUAL: return MS_VALUE::make(toNumber(a) <= toNumber(b));
         case BINARY_Ops::OP_MODULO: return MS_VALUE::make(std::fmod(toNumber(a), toNumber(b)));
+        case BINARY_Ops::OP_PLUS_ASSIGN: {
+            auto res = a + b;
+            a->set(res);
+            return res;
+        };
         default: return MS_VALUE::make();
     };
 };

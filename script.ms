@@ -17,13 +17,13 @@ let fizzbuzz2 = (n) => {
    let rel = "";
    loop (let i = 1, i <= 100, i = (i + 1)) {
       if ((i % 3) == 0) {
-         rel = rel + "Fizz";
+         rel += "Fizz";
       }
       else if ((i % 5) == 0) {
-         rel = rel + "Buzz";
+         rel += "Buzz";
       }
       else {
-         rel = rel + i;
+         rel += i;
       };
    };
    return rel;

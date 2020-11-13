@@ -142,6 +142,7 @@ Expression PLUS Expression { $$ = new AST_NODE { new AST_Binary($1, $3, BINARY_O
 | Expression LESS_THAN Expression { $$ = new AST_NODE { new AST_Binary($1, $3, BINARY_Ops::OP_LESS_THAN) }; };
 | Expression LESS_OR_EQUAL Expression { $$ = new AST_NODE { new AST_Binary($1, $3, BINARY_Ops::OP_LESS_OR_EQUAL) }; };
 | Expression MODULO Expression { $$ = new AST_NODE { new AST_Binary($1, $3, BINARY_Ops::OP_MODULO) }; };
+| Expression PLUS ASSIGN Expression { $$ = new AST_NODE { new AST_Binary($1, $4, BINARY_Ops::OP_PLUS_ASSIGN) }; };
 
 And_Or:
 Expression AND Expression {$$ = new AST_NODE { new AST_And($1, $3) }; };

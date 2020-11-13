@@ -228,7 +228,7 @@ class MS_VALUE {
 
 
 MS_POINTER operator+(MS_POINTER &left, MS_POINTER &right) {
-if (left->index() == MS_Types::T_NUMBER && right->index() == MS_Types::T_NUMBER) return std::make_shared<MS_VALUE>(left->downcast<float>() + right->downcast<float>());
+if (left->index() == MS_Types::T_NUMBER && right->index() == MS_Types::T_NUMBER) return MS_VALUE::make(left->downcast<float>() + right->downcast<float>());
 else if (left->index() == MS_Types::T_STRING && right->index() == MS_Types::T_STRING) return std::make_shared<MS_VALUE>(left->downcast<std::string>() + right->downcast<std::string>());
 else if (left->index() == MS_Types::T_NUMBER && right->index() == MS_Types::T_STRING) return std::make_shared<MS_VALUE>(left->toString() + right->downcast<std::string>());
 else if (left->index() == MS_Types::T_STRING && right->index() == MS_Types::T_NUMBER) return std::make_shared<MS_VALUE>(left->downcast<std::string>() + right->toString());
