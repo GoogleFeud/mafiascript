@@ -32,8 +32,9 @@ AST_Block* prog;
 %left AND OR 
 %left PLUS MINUS
 %left TIMES DIVIDE
-%left COMAPRE NOT_EQUAL 
+%right COMAPRE NOT_EQUAL 
 %left ASSIGN
+%left GREATER_THAN GREATER_OR_EQUAL LESS_THAN LESS_OR_EQUAL MODULO
 %right POWER 
 
 %type <node> NUMBER STRING ID BOOL _NULL 
@@ -41,7 +42,7 @@ AST_Block* prog;
 %type <node> Statement
 %type <node> Line Any
 %type <node> Block
-%type <node> If Define Binary_Operation Assign Literal Ternery Array Object Function Return Loop LoopBeforeInit And_Or Typeof Call Accessor
+%type <node> If Define Binary_Operation Assign Literal Ternery Array Object Function Return Loop LoopBeforeInit And_Or Typeof Call Accessor Binary_Statement LoopAfterInit Boolean_Operation
 %type <block> Input 
 %type <list> ExpressionList VarList
 %type <pairList> PairList
@@ -80,14 +81,13 @@ VarList: %empty { $$ = new AST_List; };
 
 Expression: 
 Binary_Operation;
+| Boolean_Operation;
 | Accessor;
-| And_Or;
 | Literal;
 | Ternery;
 | Array;
 | Object;
 | Function;
-| Assign;
 | Call;
 | Typeof;
 
@@ -96,6 +96,8 @@ If
 | Define;
 | Return;
 | Loop;
+| Binary_Statement;
+| Assign;
 
 Array:
 S_BRACKET_LEFT ExpressionList S_BRACKET_RIGHT {$$ = new AST_NODE { new AST_Array($2) }; };
@@ -117,15 +119,26 @@ NUMBER
 | _NULL
 
 If: IF PARAN_LEFT Expression PARAN_RIGHT Any { $$ = new AST_NODE { new AST_If($3, $5, NULL) }; };
+| IF PARAN_LEFT And_Or PARAN_RIGHT Any { $$ = new AST_NODE { new AST_If($3, $5, NULL) }; };
 | IF PARAN_LEFT Expression PARAN_RIGHT Any ELSE Any { $$ = new AST_NODE { new AST_If($3, $5, $7) }; };
+| IF PARAN_LEFT And_Or PARAN_RIGHT Any ELSE Any { $$ = new AST_NODE { new AST_If($3, $5, $7) }; };
 
 Define:
 LET ID { $$ = new AST_NODE { new AST_Declare($2, new AST_NODE { new AST_Null }) }; };
 | LET ID ASSIGN Expression {$$ = new AST_NODE { new AST_Declare($2, $4) }; };
+| LET ID ASSIGN And_Or {$$ = new AST_NODE { new AST_Declare($2, $4) }; };
 
 Return:
 RETURN { $$ = new AST_NODE { new AST_Return() }; };
 | RETURN Expression { $$ = new AST_NODE { new AST_Return($2) }; };
+
+Boolean_Operation:
+ Expression COMPARE Expression { $$ = new AST_NODE { new AST_Binary($1, $3, BINARY_Ops::OP_EQUAL) }; };
+| Expression NOT_EQUAL Expression { $$ = new AST_NODE { new AST_Binary($1, $3, BINARY_Ops::OP_NOT_EQUAL) }; };
+| Expression GREATER_THAN Expression { $$ = new AST_NODE { new AST_Binary($1, $3, BINARY_Ops::OP_GREATER_THAN) }; };
+| Expression GREATER_OR_EQUAL Expression { $$ = new AST_NODE { new AST_Binary($1, $3, BINARY_Ops::OP_GREATER_OR_EQUAL) }; };
+| Expression LESS_THAN Expression { $$ = new AST_NODE { new AST_Binary($1, $3, BINARY_Ops::OP_LESS_THAN) }; };
+| Expression LESS_OR_EQUAL Expression { $$ = new AST_NODE { new AST_Binary($1, $3, BINARY_Ops::OP_LESS_OR_EQUAL) }; };
 
 
 Binary_Operation:
@@ -135,14 +148,10 @@ Expression PLUS Expression { $$ = new AST_NODE { new AST_Binary($1, $3, BINARY_O
 | Expression DIVIDE Expression { $$ = new AST_NODE { new AST_Binary($1, $3, BINARY_Ops::OP_DIVISION) };};
 | Expression POWER Expression { $$ = new AST_NODE { new AST_Binary($1, $3, BINARY_Ops::OP_POWER) };};
 | PARAN_LEFT Expression PARAN_RIGHT {$$ = $2; };
-| Expression COMPARE Expression { $$ = new AST_NODE { new AST_Binary($1, $3, BINARY_Ops::OP_EQUAL) }; };
-| Expression NOT_EQUAL Expression { $$ = new AST_NODE { new AST_Binary($1, $3, BINARY_Ops::OP_NOT_EQUAL) }; };
-| Expression GREATER_THAN Expression { $$ = new AST_NODE { new AST_Binary($1, $3, BINARY_Ops::OP_GREATER_THAN) }; };
-| Expression GREATER_OR_EQUAL Expression { $$ = new AST_NODE { new AST_Binary($1, $3, BINARY_Ops::OP_GREATER_OR_EQUAL) }; };
-| Expression LESS_THAN Expression { $$ = new AST_NODE { new AST_Binary($1, $3, BINARY_Ops::OP_LESS_THAN) }; };
-| Expression LESS_OR_EQUAL Expression { $$ = new AST_NODE { new AST_Binary($1, $3, BINARY_Ops::OP_LESS_OR_EQUAL) }; };
 | Expression MODULO Expression { $$ = new AST_NODE { new AST_Binary($1, $3, BINARY_Ops::OP_MODULO) }; };
-| Expression PLUS ASSIGN Expression { $$ = new AST_NODE { new AST_Binary($1, $4, BINARY_Ops::OP_PLUS_ASSIGN) }; };
+
+Binary_Statement:
+Expression PLUS ASSIGN Expression { $$ = new AST_NODE { new AST_Binary($1, $4, BINARY_Ops::OP_PLUS_ASSIGN) }; };
 
 And_Or:
 Expression AND Expression {$$ = new AST_NODE { new AST_And($1, $3) }; };
@@ -150,7 +159,9 @@ Expression AND Expression {$$ = new AST_NODE { new AST_And($1, $3) }; };
 
 Assign:
 ID ASSIGN Expression {$$ = new AST_NODE { new AST_Assign($1, $3) }; };
+| ID ASSIGN And_Or {$$ = new AST_NODE { new AST_Assign($1, $3) }; };
 | Accessor ASSIGN Expression {$$ = new AST_NODE { new AST_Assign($1, $3) }; };
+| Accessor ASSIGN And_Or {$$ = new AST_NODE { new AST_Assign($1, $3) }; };
 
 Ternery:
 Expression QUESTION_MARK Expression DOUBLE_DOT Expression { $$ = new AST_NODE { new AST_Ternery($1, $3, $5) }; };
@@ -162,9 +173,13 @@ LoopBeforeInit:
 Define { $$ = $1; };
 | Expression { $$ = $1; };
 
+LoopAfterInit:
+Binary_Statement {$$ = $1; };
+| Expression { $$ = $1; };
+
 Loop:
-LOOP PARAN_LEFT LoopBeforeInit COMMA Expression COMMA Expression PARAN_RIGHT Any { $$ = new AST_NODE { new AST_Loop($3, $5, $7, $9) }; };
-| LOOP PARAN_LEFT LoopBeforeInit COMMA Expression PARAN_RIGHT Any { $$ = new AST_NODE { new AST_Loop($3, $5, $7) }; };
+LOOP PARAN_LEFT LoopBeforeInit COMMA Expression COMMA LoopAfterInit PARAN_RIGHT Any { $$ = new AST_NODE { new AST_Loop($3, $5, $7, $9) }; };
+| LOOP PARAN_LEFT LoopBeforeInit COMMA LoopAfterInit PARAN_RIGHT Any { $$ = new AST_NODE { new AST_Loop($3, $5, $7) }; };
 | LOOP PARAN_LEFT LoopBeforeInit PARAN_RIGHT Any { $$ = new AST_NODE { new AST_Loop($3, $5) }; };
 
 Call:

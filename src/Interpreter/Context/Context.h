@@ -188,19 +188,26 @@ public:
             MS_POINTER cond = this->executeAST(ms_if->condition, env);
             if (!cond->isFalsey())
             {
-                if (ms_if->ifTrue->index() != AST_Types::MS_BLOCK) return this->executeAST(ms_if->ifTrue, env);
+                if (ms_if->ifTrue->index() != AST_Types::MS_BLOCK) {
+                    if (ms_if->ifTrue->index() == AST_Types::MS_RETURN) return this->executeAST(ms_if->ifTrue, env);
+                    this->executeAST(ms_if->ifTrue, env);
+                } else {
                 Enviourment *newEnv = env->extend();
                 auto val = this->executeAST(ms_if->ifTrue, newEnv);
                 delete newEnv;
                 return val;
+                }
             }
-            else if (ms_if->ifFalse != NULL)
-            {
-                if (ms_if->ifFalse->index() != AST_Types::MS_BLOCK) return this->executeAST(ms_if->ifFalse, env);
+            else if (ms_if->ifFalse != NULL) {
+                if (ms_if->ifFalse->index() != AST_Types::MS_BLOCK) {
+                    if (ms_if->ifFalse->index() == AST_Types::MS_RETURN) return this->executeAST(ms_if->ifFalse, env);
+                    this->executeAST(ms_if->ifFalse, env);
+                } else {
                 Enviourment *newEnv = env->extend();
                 auto val = this->executeAST(ms_if->ifFalse, newEnv);
                 delete newEnv;
                 return val;
+                }
             }
             return MS_VALUE::make();
         };
