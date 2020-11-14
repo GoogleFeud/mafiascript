@@ -49,13 +49,14 @@ class MS_Array {
 
 
 
-using C_Function = std::function<MS_POINTER(std::vector<MS_POINTER>, Enviourment*)>;
+using C_Function = std::function<MS_POINTER(std::vector<MS_POINTER>)>;
 using RAW_MS_VALUE = std::variant<std::string, float, bool, std::nullptr_t, MS_Array*, MS_Function*, C_Function>;
 
 class MS_VALUE {
     public:
     RAW_MS_VALUE value;
     std::unordered_map<std::string, MS_POINTER> properties;
+    bool isConst = false;
 
     MS_VALUE(const std::string &str) {
         value = str;
@@ -74,6 +75,9 @@ class MS_VALUE {
 
     MS_VALUE(std::vector<MS_POINTER> &arr) {
         value = new MS_Array(arr);
+        properties.insert({"size", MS_VALUE::make([&](std::vector<MS_POINTER> params) -> MS_POINTER {
+            return MS_VALUE::make((float)this->downcast<MS_Array*>()->entries.size());
+        })});
     };
 
     MS_VALUE(MS_Function *fn) {
@@ -96,6 +100,7 @@ class MS_VALUE {
     };
 
     void set(MS_POINTER &val) {
+        if (isConst) throw std::runtime_error("Cannot assign to a constant variable");
         value = val->value;
     };
 

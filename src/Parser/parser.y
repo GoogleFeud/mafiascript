@@ -129,6 +129,8 @@ Define:
 LET ID { $$ = new AST_NODE { new AST_Declare($2, new AST_NODE { new AST_Null }) }; };
 | LET ID ASSIGN Expression {$$ = new AST_NODE { new AST_Declare($2, $4) }; };
 | LET ID ASSIGN And_Or {$$ = new AST_NODE { new AST_Declare($2, $4) }; };
+| CONST ID ASSIGN Expression {$$ = new AST_NODE { new AST_Declare($2, $4, true) }; };
+| CONST ID ASSIGN And_Or {$$ = new AST_NODE { new AST_Declare($2, $4, true) }; };
 
 Return:
 RETURN { $$ = new AST_NODE { new AST_Return() }; };

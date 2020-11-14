@@ -31,7 +31,7 @@ int main()
   auto start = high_resolution_clock::now();
     std::vector params = {MS_VALUE::make(1.f), MS_VALUE::make(15.f)};
     std::string fnName = "print";
-    auto fnVal = MS_VALUE::make([&](std::vector<MS_POINTER> vals, Enviourment* env) -> MS_POINTER {
+    auto fnVal = MS_VALUE::make([&](std::vector<MS_POINTER> vals) -> MS_POINTER {
         for (MS_POINTER val : vals) {
             std::cout<<val->toString()<<std::endl;
         };

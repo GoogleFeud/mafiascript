@@ -25,9 +25,11 @@ class AST_Declare {
     public:
     std::string name;
     AST_NODE* value;
+    bool isConst;
 
-    AST_Declare(AST_NODE* name, AST_NODE* value) {
+    AST_Declare(AST_NODE* name, AST_NODE* value, bool isConst = false) {
         this->name = downcast<AST_Var*>(name)->value;
+        this->isConst = isConst;
         delete name;
         this->value = value;
     };

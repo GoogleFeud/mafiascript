@@ -150,7 +150,7 @@ public:
                 {
                     paramVals.push_back(this->executeAST(val, env));
                 };
-                return fn(paramVals, env);
+                return fn(paramVals);
             }
             else throw std::runtime_error("Cannot call a " + functionObj->typeToString());
         };
@@ -179,6 +179,7 @@ public:
         {
             AST_Declare *declare = downcast<AST_Declare *>(node);
             auto val = this->executeAST(declare->value, env);
+            if (declare->isConst) val->isConst = true;
             env->define(declare->name, val);
             return MS_VALUE::make();
         };
