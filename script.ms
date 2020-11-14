@@ -16,19 +16,17 @@ let fizzbuzz1 = (n) => {
 let fizzbuzz2 = (n) => {
    let rel = "";
    loop (let i = 1, i <= 100, i += 1) {
-      if (i % 3 == 0) rel += "\nFizz"
-      else if (i % 5 == 0) rel += "\nBuzz"
+      if ((i % 3) == 0) rel += "\nFizz"
+      else if ((i % 5) == 0) rel += "\nBuzz"
       else rel += "\n" + i;
    };
    return rel;
 };
 
-let test = (thing) => {
-   return thing?15:10;
-};
 
 let fn = (a) => {
-   if (true) "aaaa";
-   let res = fizzbuzz1(100);
-   return res;
+   let arr = [1, 2, 3, 4, 5];
+   //let res = fizzbuzz2(100);
+   arr[5] = 1000;
+   return arr[0] + arr[1] + arr[2] + arr[3] + arr[4] + arr[5];
 };

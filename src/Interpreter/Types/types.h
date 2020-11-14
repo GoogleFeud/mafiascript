@@ -202,21 +202,30 @@ class MS_VALUE {
     MS_POINTER operator[](MS_POINTER &inside) {
         if (inside->index() == MS_Types::T_NUMBER && value.index() == MS_Types::T_ARRAY) {
             MS_Array* arr = downcast<MS_Array*>();
-            float index =  inside->downcast<float>();
-            if (index > arr->entries.size()) {
+            float index = inside->downcast<float>();
+            if (index >= arr->entries.size()) {
                 auto null = MS_VALUE::make();
+                arr->entries.resize(index + 1);
                 arr->entries[index] = null;
                 return null;
             }
             return arr->entries[index];
         }
         std::string propName = inside->toString();
-        if (!this->properties.count(propName)) return MS_VALUE::make();
+        if (!this->properties.count(propName)) {
+            auto null = MS_VALUE::make();
+            this->properties[propName] = null;
+            return null;
+        }
         return this->properties[propName];
     };
 
     MS_POINTER operator[](std::string &propName) {
-        if (!this->properties.count(propName)) return MS_VALUE::make();
+        if (!this->properties.count(propName)) {
+            auto null = MS_VALUE::make();
+            this->properties[propName] = null;
+            return null;
+        }
         return this->properties[propName];
     };
 
