@@ -29,6 +29,21 @@ MS_POINTER applyOperator(MS_POINTER &a, MS_POINTER &b, BINARY_Ops &op) {
             a->set(res);
             return res;
         };
+        case BINARY_Ops::OP_MINUS_ASSIGN: {
+            auto res = MS_VALUE::make(toNumber(a) - toNumber(b));
+            a->set(res);
+            return res;
+        };
+        case BINARY_Ops::OP_MULTIPLY_ASSIGN: {
+            auto res = MS_VALUE::make(toNumber(a) * toNumber(b));
+            a->set(res);
+            return res;
+        };
+        case BINARY_Ops::OP_DIVIDE_ASSIGN: {
+            auto res = MS_VALUE::make(toNumber(a) / toNumber(b));
+            a->set(res);
+            return res;
+        }
         default: return MS_VALUE::make();
     };
 };

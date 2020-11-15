@@ -33,7 +33,10 @@ enum BINARY_Ops {
     OP_LESS_THAN,
     OP_LESS_OR_EQUAL,
     OP_MODULO,
-    OP_PLUS_ASSIGN
+    OP_PLUS_ASSIGN,
+    OP_MINUS_ASSIGN,
+    OP_MULTIPLY_ASSIGN,
+    OP_DIVIDE_ASSIGN,
 };
 
 class AST_Binary {

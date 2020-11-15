@@ -45,6 +45,10 @@ class Enviourment {
         this->values.clear();
     }
 
+    size_t size() {
+        return this->values.size();
+    }
+
     ~Enviourment() {
         this->values.clear();
         //delete this;

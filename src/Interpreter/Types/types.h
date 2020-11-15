@@ -102,6 +102,7 @@ class MS_VALUE {
     void set(MS_POINTER &val) {
         if (isConst) throw std::runtime_error("Cannot assign to a constant variable");
         value = val->value;
+        properties = val->properties;
     };
 
     template<typename T>
@@ -237,6 +238,11 @@ class MS_VALUE {
     bool hasProperty(std::string &propName) {
         return this->properties.count(propName);
     };
+
+    ~MS_VALUE() {
+        if (value.index() == MS_Types::T_ARRAY) delete this->downcast<MS_Array*>();
+        else if (value.index() == MS_Types::T_FUNCTION) delete this->downcast<MS_Function*>();
+    }; 
 
 };
 

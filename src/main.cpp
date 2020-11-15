@@ -33,7 +33,7 @@ int main()
     std::string fnName = "print";
     auto fnVal = MS_VALUE::make([&](std::vector<MS_POINTER> vals) -> MS_POINTER {
         for (MS_POINTER val : vals) {
-            std::cout<<val->toString()<<std::endl;
+            std::cout<<val->toString() + "\n";
         };
         return MS_VALUE::make();
     });
@@ -43,6 +43,7 @@ int main()
     auto duration = duration_cast<microseconds>(stop - start);
     std::cout << "Time function took: " << duration.count() << " microseconds!"<<std::endl;;
     std::cout<<res->toString()<<std::endl;  
+    ctx->global->clear();
     std::cout<<fn.use_count()<<std::endl;
     system("pause");
     return 0;

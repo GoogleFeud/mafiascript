@@ -153,7 +153,14 @@ Expression PLUS Expression { $$ = new AST_NODE { new AST_Binary($1, $3, BINARY_O
 | Expression MODULO Expression { $$ = new AST_NODE { new AST_Binary($1, $3, BINARY_Ops::OP_MODULO) }; };
 
 Binary_Statement:
-Expression PLUS ASSIGN Expression { $$ = new AST_NODE { new AST_Binary($1, $4, BINARY_Ops::OP_PLUS_ASSIGN) }; };
+ID PLUS ASSIGN Expression { $$ = new AST_NODE { new AST_Binary($1, $4, BINARY_Ops::OP_PLUS_ASSIGN) }; };
+| Accessor PLUS ASSIGN Expression { $$ = new AST_NODE { new AST_Binary($1, $4, BINARY_Ops::OP_PLUS_ASSIGN) }; };
+| ID MINUS ASSIGN Expression { $$ = new AST_NODE { new AST_Binary($1, $4, BINARY_Ops::OP_MINUS_ASSIGN) }; };
+| Accessor MINUS ASSIGN Expression { $$ = new AST_NODE { new AST_Binary($1, $4, BINARY_Ops::OP_MINUS_ASSIGN) }; };
+| ID TIMES ASSIGN Expression { $$ = new AST_NODE { new AST_Binary($1, $4, BINARY_Ops::OP_MULTIPLY_ASSIGN) }; };
+| Accessor TIMES ASSIGN Expression { $$ = new AST_NODE { new AST_Binary($1, $4, BINARY_Ops::OP_MULTIPLY_ASSIGN) }; };
+| ID DIVIDE ASSIGN Expression { $$ = new AST_NODE { new AST_Binary($1, $4, BINARY_Ops::OP_DIVIDE_ASSIGN) }; };
+| Accessor DIVIDE ASSIGN Expression { $$ = new AST_NODE { new AST_Binary($1, $4, BINARY_Ops::OP_DIVIDE_ASSIGN) }; };
 
 And_Or:
 Expression AND Expression {$$ = new AST_NODE { new AST_And($1, $3) }; };
