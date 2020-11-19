@@ -147,6 +147,7 @@ class MS_VALUE {
                 return (val) ? "true":"false";
             };
             case MS_Types::T_NULL: return "null";
+            case MS_Types::T_ARRAY: return (properties["toString"]->downcast<C_Function>())(std::vector<MS_POINTER> {})->downcast<std::string>();
             default: throw std::runtime_error("Type " + typeToString() + " cannot be converted to a string!");
         };
     };

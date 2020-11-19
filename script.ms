@@ -30,5 +30,5 @@ let fn = (a) => {
    res = "Hell";
    res = arr;
    res[0] = 15;
-   return res[0];
+   return res.slice(0, 3).join("\n");
 };
