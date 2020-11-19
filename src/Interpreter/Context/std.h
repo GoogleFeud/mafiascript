@@ -67,7 +67,7 @@ void __initString(MS_VALUE *str) {
 };
 
 void __initArray(MS_VALUE *arr) {
-    MS_Array* val = arr->downcast<MS_Array*>();
+    MS_Array val = arr->downcast<MS_Array>();
     arr->properties["size"] = MS_VALUE::make([val](std::vector<MS_POINTER> params) -> MS_POINTER {
         return MS_VALUE::make((float)val->entries.size());
     });

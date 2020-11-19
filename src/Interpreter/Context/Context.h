@@ -77,7 +77,7 @@ public:
         case AST_Types::MS_FUNCTION:
         {
             AST_Function *fn = downcast<AST_Function *>(node);
-            MS_Function* msFunc = new MS_Function(fn->body, fn->params, this->global->extend());
+            MS_Function msFunc = std::make_shared<_MS_Function>(fn->body, fn->params, this->global->extend());
             if (fn->captures.size())
             {
                 for (std::string capture : fn->captures)
@@ -262,20 +262,20 @@ public:
 
     MS_POINTER callFunction(MS_Function &func, std::vector<MS_POINTER> &params)
     {
-        int size = func.params.size();
-        Enviourment *newEnv = func.scope->extend();
+        int size = func->params.size();
+        Enviourment *newEnv = func->scope->extend();
         for (int i = 0; i < size; i++)
         {
-            newEnv->define(func.params[i], params[i]);
+            newEnv->define(func->params[i], params[i]);
         };
-        auto val = this->executeAST(func.body, newEnv);
+        auto val = this->executeAST(func->body, newEnv);
         delete newEnv;
         return val;
     };
 
     MS_POINTER callFunction(MS_POINTER &fnObj, std::vector<MS_POINTER> &params)
     {
-        MS_Function* func = fnObj->downcast<MS_Function*>();
+        MS_Function func = fnObj->downcast<MS_Function>();
         int size = func->params.size();
         Enviourment *newEnv = func->scope->extend();
         for (int i = 0; i < size; i++)

@@ -1,7 +1,17 @@
  
 let fibonacci = (n) => {
-   if (n <= 1) return 1;
-   return fibonacci(n - 1) + fibonacci(n - 2);
+   if (n == 0) return 0;
+   const arr = [0, 1];
+   loop (let i=2, i <= n, i += 1) {
+      arr[i] = arr[i - 1] + arr[i - 2];
+   };
+   return arr[n];
+};
+
+let fibonacci2 = (n) => {
+   if (n < 1) return 0;
+   if (n <= 2) return 1;
+   return fibonacci2(n - 1) + fibonacci2(n - 2);
 };
 
 let fizzbuzz1 = (n) => {
@@ -24,11 +34,12 @@ let fizzbuzz2 = (n) => {
 };
 
 let fn = (a) => {
-   //let res = fizzbuzz1(100);
+   //fizzbuzz1(100);
    const arr = [1, 2, 3, 4, 5, 6];
    let res = "Hello";
    res = "Hell";
    res = arr;
    res[0] = 15;
-   return res.slice(0, 3).join("\n");
+   res.fib = fibonacci;
+   return res.fib(10);
 };

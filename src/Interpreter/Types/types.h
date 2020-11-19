@@ -24,36 +24,38 @@ void deleteEnv(Enviourment* env);
 void __initString(MS_VALUE *str);
 void __initArray(MS_VALUE *arr);
 
-class MS_Function {
+class _MS_Function {
     public:
     Enviourment* scope;
     std::vector<std::string> params;
     AST_NODE* body;
 
-    MS_Function(AST_NODE* bod, std::vector<std::string> &params, Enviourment* env) : params(params) {
+    _MS_Function(AST_NODE* bod, std::vector<std::string> &params, Enviourment* env) : params(params) {
         body = bod;
         scope = env;
     };
 
-    ~MS_Function() {
+    ~_MS_Function() {
         deleteEnv(scope);
         delete body;
     };
 
 }; 
 
-class MS_Array {
+class _MS_Array {
     public:
     std::vector<MS_POINTER> entries;
-    MS_Array(std::vector<MS_POINTER> &values) : entries(values) {
+    _MS_Array(std::vector<MS_POINTER> &values) : entries(values) {
     };
-    MS_Array() {};
+    _MS_Array() {};
 };
 
 
+using MS_Function = std::shared_ptr<_MS_Function>;
+using MS_Array = std::shared_ptr<_MS_Array>;
 
 using C_Function = std::function<MS_POINTER(std::vector<MS_POINTER>)>;
-using RAW_MS_VALUE = std::variant<std::string, float, bool, std::nullptr_t, MS_Array*, MS_Function*, C_Function>;
+using RAW_MS_VALUE = std::variant<std::string, float, bool, std::nullptr_t, MS_Array, MS_Function, C_Function>;
 
 class MS_VALUE {
     public: 
@@ -79,11 +81,11 @@ class MS_VALUE {
     };
 
     MS_VALUE(std::vector<MS_POINTER> &arr) {
-        value = new MS_Array(arr);
+        value = std::make_shared<_MS_Array>(arr);
         __initArray(this);
     };
 
-    MS_VALUE(MS_Function *fn) {
+    MS_VALUE(MS_Function &fn) {
         value = fn;
     }
 
@@ -201,7 +203,7 @@ class MS_VALUE {
         return std::make_shared<MS_VALUE>(map);
     };
 
-    static MS_POINTER make(MS_Function *fn) {
+    static MS_POINTER make(MS_Function &fn) {
         return std::make_shared<MS_VALUE>(fn);
     }
 
@@ -211,7 +213,7 @@ class MS_VALUE {
 
     MS_POINTER getProperty(MS_POINTER &inside) {
             if (inside->index() == MS_Types::T_NUMBER && value.index() == MS_Types::T_ARRAY) {
-            MS_Array* arr = downcast<MS_Array*>();
+            MS_Array arr = downcast<MS_Array>();
             float index = inside->downcast<float>();
             if (index >= arr->entries.size()) {
                 auto null = MS_VALUE::make();
