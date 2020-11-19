@@ -64,6 +64,9 @@ void __initString(MS_VALUE *str) {
     str->properties["toString"] = MS_VALUE::make([val](std::vector<MS_POINTER> params) -> MS_POINTER {
         return std::make_shared<MS_VALUE>(val);
     });
+    str->properties["toNumber"] = MS_VALUE::make([val](std::vector<MS_POINTER> params) -> MS_POINTER {
+        return std::make_shared<MS_VALUE>(std::stof(val));
+    });
 };
 
 void __initArray(MS_VALUE *arr) {
@@ -109,8 +112,27 @@ void __initArray(MS_VALUE *arr) {
     arr->properties["slice"] = MS_VALUE::make([val](std::vector<MS_POINTER> params) -> MS_POINTER {
         float start = params.size() ? params[0]->downcast<float>():0;
         float len = params.size() == 2 ? params[1]->downcast<float>():val->entries.size();
-        auto res = std::vector<MS_POINTER>(val->entries.begin() + start, val->entries.begin() + start + len);
+        if (start > val->entries.size() || start > len) start = 0;
+        if (len > val->entries.size()) len = val->entries.size();
+        auto res = std::vector<MS_POINTER>(val->entries.begin() + start, val->entries.begin() + len);
         return MS_VALUE::make(res);
+    });
+    arr->properties["delete"] = MS_VALUE::make([val](std::vector<MS_POINTER> params) -> MS_POINTER {
+        float start = params.size() ? params[0]->downcast<float>():0;
+        if (params.size() < 2) val->entries.erase(val->entries.begin() + start);
+        else {
+        float end = params.size() == 2 ? params[1]->downcast<float>():1;
+        val->entries.erase(val->entries.begin() + start, val->entries.begin() + end);
+        };
+        return MS_VALUE::make();
+    });
+    arr->properties["fill"] = MS_VALUE::make([val](std::vector<MS_POINTER> params) -> MS_POINTER {
+        if (!params.size()) throw std::runtime_error("Fill function requires at least one parameter!");
+        MS_POINTER fillValue = params[0];
+        float fillLength = params[1] ? params[1]->downcast<float>():1.f;
+        val->entries.resize(fillLength);
+        std::fill(val->entries.begin(), val->entries.end(), fillValue);
+        return MS_VALUE::make(val->entries);
     });
     arr->properties["filter"] = MS_VALUE::make([val](std::vector<MS_POINTER> params) -> MS_POINTER {
         std::vector<MS_POINTER> res;
@@ -143,7 +165,63 @@ void __initArray(MS_VALUE *arr) {
         };
         return accumulator;
     });
+    arr->properties["some"] = MS_VALUE::make([val](std::vector<MS_POINTER> params) -> MS_POINTER {
+        if (!params[0] || params[0]->index() != MS_Types::T_FUNCTION) throw std::runtime_error("Reduce function accepts only a function!");
+        MS_Function fn = params[0]->downcast<MS_Function>();
+        for (MS_POINTER value : val->entries) {
+            std::vector param = std::vector {value};
+            if (!_callFunction(fn->ctx, fn, param)->isFalsey()) return MS_VALUE::make(true);
+        };
+        return MS_VALUE::make(false);
+    });
+    arr->properties["every"] = MS_VALUE::make([val](std::vector<MS_POINTER> params) -> MS_POINTER {
+        if (!params[0] || params[0]->index() != MS_Types::T_FUNCTION) throw std::runtime_error("Reduce function accepts only a function!");
+        MS_Function fn = params[0]->downcast<MS_Function>();
+        for (MS_POINTER value : val->entries) {
+            std::vector param = std::vector {value};
+            if (_callFunction(fn->ctx, fn, param)->isFalsey()) return MS_VALUE::make(false);
+        };
+        return MS_VALUE::make(true);
+    });
     arr->properties["at"] = MS_VALUE::make([val](std::vector<MS_POINTER> params) -> MS_POINTER {
         return val->entries[params.size() ? params[0]->toNumber():0];
     });
 }; 
+
+void __initNumber(MS_VALUE* num) {
+    float val = num->downcast<float>();
+    num->properties["toString"] = MS_VALUE::make([val](std::vector<MS_POINTER> params) -> MS_POINTER {
+        auto str = std::to_string(val);
+        return MS_VALUE::make(str);
+    });
+    num->properties["abs"] = MS_VALUE::make([val](std::vector<MS_POINTER> params) -> MS_POINTER {
+        return MS_VALUE::make(std::abs(val));
+    });
+    num->properties["floor"] = MS_VALUE::make([val](std::vector<MS_POINTER> params) -> MS_POINTER {
+        return MS_VALUE::make(std::floor(val));
+    });
+    num->properties["ceil"] = MS_VALUE::make([val](std::vector<MS_POINTER> params) -> MS_POINTER {
+        return MS_VALUE::make(std::ceil(val));
+    });
+    num->properties["log"] = MS_VALUE::make([val](std::vector<MS_POINTER> params) -> MS_POINTER {
+        return MS_VALUE::make(std::log(val));
+    });
+    num->properties["log10"] = MS_VALUE::make([val](std::vector<MS_POINTER> params) -> MS_POINTER {
+        return MS_VALUE::make(std::log10(val));
+    });
+    num->properties["exp"] = MS_VALUE::make([val](std::vector<MS_POINTER> params) -> MS_POINTER {
+        return MS_VALUE::make(std::exp(val));
+    });
+    num->properties["pow"] = MS_VALUE::make([val](std::vector<MS_POINTER> params) -> MS_POINTER {
+        auto powerOf = params[0] && params[0]->index() == MS_Types::T_NUMBER ? params[0]->downcast<float>():1;
+        return MS_VALUE::make(std::pow(val, powerOf));
+    });
+}
+
+void __initBoolean(MS_VALUE* boolean) {
+    bool val = boolean->downcast<bool>();
+    boolean->properties["toString"] = MS_VALUE::make([val](std::vector<MS_POINTER> params) -> MS_POINTER {
+        auto res = val ? "true":"false";
+        return MS_VALUE::make(res);
+    });
+}

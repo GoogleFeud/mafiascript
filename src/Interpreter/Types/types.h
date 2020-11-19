@@ -24,6 +24,8 @@ class Context;
 
 void __initString(MS_VALUE *str);
 void __initArray(MS_VALUE *arr);
+void __initNumber(MS_VALUE *num);
+void __initBoolean(MS_VALUE *boo);
 
 class _MS_Function {
     public:
@@ -73,10 +75,12 @@ class MS_VALUE {
 
     MS_VALUE(float num) {
         value = num;
+        __initNumber(this);
     };
 
     MS_VALUE(bool boolean) {
         value = boolean;
+        __initBoolean(this);
     }; 
 
     MS_VALUE() {

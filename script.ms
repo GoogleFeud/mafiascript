@@ -43,7 +43,6 @@ let fn = (a) => {
    let res = "Hello";
    res = "Hell";
    res = arr;
-   res[0] = 15;
    res.fib = fibonacci;
-   return res.reduce((acc, n) => acc + n, 100);
+   return true.toString();
 };
