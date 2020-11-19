@@ -154,29 +154,30 @@ public:
             }
             else throw std::runtime_error("Cannot call " + functionObj->typeToString());
         };
-        case AST_Types::MS_BINARY:
-        {
+        case AST_Types::MS_BINARY: {
             AST_Binary *binary = downcast<AST_Binary *>(node);
             MS_POINTER a = this->executeAST(binary->left, env);
             MS_POINTER b = this->executeAST(binary->right, env);
             return applyOperator(a, b, binary->op);
         };
-        case AST_Types::MS_AND:
-        {
+        case AST_Types::MS_UNARY: {
+            AST_Unary* unary = downcast<AST_Unary*>(node);
+            MS_POINTER a = this->executeAST(unary->value, env);
+            return applyUnaryOperator(a, unary->op);
+        }
+        case AST_Types::MS_AND: {
             AST_And *_and = downcast<AST_And *>(node);
             MS_POINTER left = this->executeAST(_and->left, env);
             if (!left->isFalsey()) return this->executeAST(_and->right, env);
             return MS_VALUE::make(false);
         };
-        case AST_Types::MS_OR:
-        {
+        case AST_Types::MS_OR: {
             AST_Or *_or = downcast<AST_Or *>(node);
             MS_POINTER left = this->executeAST(_or->left, env);
             if (left->isFalsey()) return this->executeAST(_or->right, env);
             return left;
         };
-        case AST_Types::MS_DECLARE:
-        {
+        case AST_Types::MS_DECLARE: {
             AST_Declare *declare = downcast<AST_Declare *>(node);
             auto val = this->executeAST(declare->value, env);
             if (declare->isConst) val->isConst = true;

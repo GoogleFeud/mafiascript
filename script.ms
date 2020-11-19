@@ -1,6 +1,6 @@
  
 let fibonacci = (n) => {
-   if (n == 0) return 0;
+   if (!n) return 0;
    const arr = [0, 1];
    loop (let i=2, i <= n, i += 1) {
       arr[i] = arr[i - 1] + arr[i - 2];
@@ -15,7 +15,7 @@ let fibonacci2 = (n) => {
 };
 
 let fizzbuzz1 = (n) => {
-   loop (let i = 1, i <= n, i += 1) {
+   loop (let i = 1, i <= n, i++) {
       if ((i % 3) == 0 && (i % 5) == 0) print("FizzBuzz")
       else if ((i % 3) == 0) print("Fizz")
       else if ((i % 5) == 0) print("Buzz")
@@ -25,7 +25,7 @@ let fizzbuzz1 = (n) => {
 
 let fizzbuzz2 = (n) => {
    let rel = "";
-   loop (let i = 1, i <= 100, i += 1) {
+   loop (let i = 1, i <= 100, i++) {
       if ((i % 3) == 0) rel += "\nFizz"
       else if ((i % 5) == 0) rel += "\nBuzz"
       else rel += "\n" + i;
@@ -38,11 +38,11 @@ const fnThatTakesObj = (obj) => {
 };
 
 let fn = (a) => {
-   //fizzbuzz1(100);
+   fizzbuzz1(100);
    const arr = [1, 2, 3, 4, 5, 6];
    let res = "Hello";
    res = "Hell";
    res = arr;
    res.fib = fibonacci;
-   return true.toString();
+   return res.fib(10);
 };

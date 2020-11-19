@@ -47,3 +47,20 @@ MS_POINTER applyOperator(MS_POINTER &a, MS_POINTER &b, BINARY_Ops &op) {
         default: return MS_VALUE::make();
     };
 };
+
+MS_POINTER applyUnaryOperator(MS_POINTER &a, UNARY_Ops &op) {
+    switch(op) {
+        case UNARY_Ops::OP_UNARY_NOT: return MS_VALUE::make(a->isFalsey());
+        case UNARY_Ops::OP_UNARY_INC: {
+            if (a->index() != MS_Types::T_NUMBER) throw std::runtime_error("Cannot increment value of type " + a->typeToString());
+            a->value = a->downcast<float>() + 1;
+            return a;
+        };
+        case UNARY_Ops::OP_UNARY_DEC: {
+            if (a->index() != MS_Types::T_NUMBER) throw std::runtime_error("Cannot increment value of type " + a->typeToString());
+            a->value = a->downcast<float>() - 1;
+            return a;
+        };
+        default: return MS_VALUE::make();
+    };
+}

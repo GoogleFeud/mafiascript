@@ -24,16 +24,17 @@ AST_Block* prog;
 
 %token STRING NUMBER ID BOOL _NULL 
 %token IF ELSE RETURN LOOP LET CONST CONTINUE TYPEOF
-%token PLUS MINUS TIMES DIVIDE POWER COMPARE NOT ASSIGN NOT_EQUAL OR AND GREATER_THAN GREATER_OR_EQUAL LESS_THAN LESS_OR_EQUAL MODULO
+%token PLUS MINUS TIMES DIVIDE POWER COMPARE NOT ASSIGN NOT_EQUAL OR AND GREATER_THAN GREATER_OR_EQUAL LESS_THAN LESS_OR_EQUAL MODULO INC DEC
 %token PARAN_LEFT PARAN_RIGHT COMMA BRACKET_LEFT BRACKET_RIGHT QUESTION_MARK DOUBLE_DOT S_BRACKET_LEFT S_BRACKET_RIGHT NEXT DOT
 %token END_OF_LINE
 
 %left IF ELSE RETURN LOOP LET CONST CONTINUE TYPEOF
-%left ASSIGN
 %left AND OR 
 %left COMAPRE NOT_EQUAL GREATER_THAN GREATER_OR_EQUAL LESS_THAN LESS_OR_EQUAL 
 %left PLUS MINUS
 %left TIMES DIVIDE
+%left INC DEC
+%left ASSIGN
 %left MODULO
 %right POWER 
 
@@ -42,7 +43,7 @@ AST_Block* prog;
 %type <node> Statement
 %type <node> Line Any
 %type <node> Block
-%type <node> If Define Binary_Operation Assign Literal Ternery Array Object Function Return Loop LoopBeforeInit And_Or Typeof Call Accessor Binary_Statement LoopAfterInit Boolean_Operation WrappedExpression
+%type <node> If Define Binary_Operation Assign Literal Ternery Array Object Function Return Loop LoopBeforeInit And_Or Typeof Call Accessor Binary_Statement LoopAfterInit Boolean_Operation Wrapped_Expression Unary_Operation
 %type <block> Input 
 %type <list> ExpressionList VarList
 %type <pairList> PairList
@@ -89,7 +90,8 @@ Boolean_Operation;
 | Function;
 | Call;
 | Typeof;
-| WrappedExpression;
+| Wrapped_Expression;
+| Unary_Operation;
 
 Statement: 
 If
@@ -99,7 +101,7 @@ If
 | Binary_Statement;
 | Assign;
 
-WrappedExpression:
+Wrapped_Expression:
 PARAN_LEFT Expression PARAN_RIGHT { $$ = $2; };
 
 Array:
@@ -165,6 +167,11 @@ ID PLUS ASSIGN Expression { $$ = new AST_NODE { new AST_Binary($1, $4, BINARY_Op
 | ID DIVIDE ASSIGN Expression { $$ = new AST_NODE { new AST_Binary($1, $4, BINARY_Ops::OP_DIVIDE_ASSIGN) }; };
 | Accessor DIVIDE ASSIGN Expression { $$ = new AST_NODE { new AST_Binary($1, $4, BINARY_Ops::OP_DIVIDE_ASSIGN) }; };
 
+Unary_Operation:
+NOT Expression { $$ = new AST_NODE { new AST_Unary($2, UNARY_Ops::OP_UNARY_NOT) }; };
+| Expression INC { $$ = new AST_NODE { new AST_Unary($1, UNARY_Ops::OP_UNARY_INC) }; };
+| Expression DEC { $$ = new AST_NODE { new AST_Unary($1, UNARY_Ops::OP_UNARY_DEC) }; };
+
 And_Or:
 Expression AND Expression {$$ = new AST_NODE { new AST_And($1, $3) }; };
 | Expression OR Expression {$$ = new AST_NODE { new AST_Or($1, $3) }; };
@@ -186,8 +193,8 @@ Define { $$ = $1; };
 | Expression { $$ = $1; };
 
 LoopAfterInit:
-Binary_Statement {$$ = $1; };
-| Expression { $$ = $1; };
+Expression { $$ = $1; };
+| Binary_Statement {$$ = $1; };
 
 Loop:
 LOOP PARAN_LEFT LoopBeforeInit COMMA Expression COMMA LoopAfterInit PARAN_RIGHT Any { $$ = new AST_NODE { new AST_Loop($3, $5, $7, $9) }; };
@@ -202,8 +209,8 @@ ID PARAN_LEFT ExpressionList PARAN_RIGHT { $$ = new AST_NODE { new AST_Call($3, 
 Accessor:
 Literal DOT ID {$$ = new AST_NODE { new AST_Accessor($1, new AST_NODE { new AST_Access_Point($3) }) }; };
 | Literal S_BRACKET_LEFT Expression S_BRACKET_RIGHT {$$ = new AST_NODE { new AST_Accessor($1, $3) }; };
-| WrappedExpression DOT ID {$$ = new AST_NODE { new AST_Accessor($1, new AST_NODE { new AST_Access_Point($3) }) }; };
-| WrappedExpression S_BRACKET_LEFT Expression S_BRACKET_RIGHT S_BRACKET_RIGHT {$$ = new AST_NODE { new AST_Accessor($1, $3) }; };
+| Wrapped_Expression DOT ID {$$ = new AST_NODE { new AST_Accessor($1, new AST_NODE { new AST_Access_Point($3) }) }; };
+| Wrapped_Expression S_BRACKET_LEFT Expression S_BRACKET_RIGHT S_BRACKET_RIGHT {$$ = new AST_NODE { new AST_Accessor($1, $3) }; };
 | Call DOT ID {$$ = new AST_NODE { new AST_Accessor($1, new AST_NODE { new AST_Access_Point($3) }) }; };
 | Call S_BRACKET_LEFT Expression S_BRACKET_RIGHT {$$ = new AST_NODE { new AST_Accessor($1, $3) }; };
 | Accessor DOT ID { downcast<AST_Accessor*>($$)->push(new AST_NODE { new AST_Access_Point($3) }); };

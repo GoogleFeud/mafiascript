@@ -75,6 +75,8 @@ THEN "=>"
 "<=" return LESS_OR_EQUAL;
 "%" return MODULO;
 "." return DOT;
+"++" return INC;
+"--" return DEC;
 "//".*  {};
  
 ";" return END_OF_LINE;

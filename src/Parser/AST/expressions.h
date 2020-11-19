@@ -198,3 +198,25 @@ class AST_Accessor {
     };
 
 };
+
+enum UNARY_Ops {
+    OP_UNARY_NOT,
+    OP_UNARY_INC,
+    OP_UNARY_DEC
+};
+
+class AST_Unary {
+    public:
+    AST_NODE* value;
+    UNARY_Ops op;
+
+    AST_Unary(AST_NODE* val, UNARY_Ops oper) {
+        value = val;
+        op = oper;
+    };
+
+    ~AST_Unary() {
+        delete value;
+    };
+
+};
