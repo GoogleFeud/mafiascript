@@ -77,7 +77,7 @@ public:
         case AST_Types::MS_FUNCTION:
         {
             AST_Function *fn = downcast<AST_Function *>(node);
-            MS_Function msFunc = std::make_shared<_MS_Function>(fn->body, fn->params, this->global->extend());
+            MS_Function msFunc = std::make_shared<_MS_Function>(fn->body, fn->params, this->global->extend(), this);
             if (fn->captures.size())
             {
                 for (std::string capture : fn->captures)
@@ -292,6 +292,16 @@ public:
         delete this->global;
     };
 
-    private:
+};
 
+
+MS_POINTER _callFunction(Context* ctx, MS_POINTER &fnObj, std::vector<MS_POINTER> &params) {
+    if (fnObj->index() == MS_Types::T_FUNCTION) return ctx->callFunction(fnObj, params);
+    else if (fnObj->index() == MS_Types::C_FUNCTION) return fnObj->downcast<C_Function>()(params);
+    else throw std::runtime_error("Provided argument must be a function!");
+};
+
+
+MS_POINTER _callFunction(Context* ctx, MS_Function &fnObj, std::vector<MS_POINTER> &params) {
+    return ctx->callFunction(fnObj, params);
 };

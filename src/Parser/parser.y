@@ -109,7 +109,7 @@ Object:
 BRACKET_LEFT PairList BRACKET_RIGHT {$$ = new AST_NODE { new AST_Object($2) }; };
 
 Function:
- PARAN_LEFT VarList PARAN_RIGHT NEXT BRACKET_LEFT Block BRACKET_RIGHT { $$ = new AST_NODE { new AST_Function($2, $6) }; };
+PARAN_LEFT VarList PARAN_RIGHT NEXT BRACKET_LEFT Block BRACKET_RIGHT { $$ = new AST_NODE { new AST_Function($2, $6) }; };
 | PARAN_LEFT VarList PARAN_RIGHT NEXT Expression { $$ = new AST_NODE { new AST_Function($2, $5) }; };
 | S_BRACKET_LEFT VarList S_BRACKET_RIGHT PARAN_LEFT VarList PARAN_RIGHT NEXT BRACKET_LEFT Block BRACKET_RIGHT { $$ = new AST_NODE { new AST_Function($5, $9, $2) }; };
 | S_BRACKET_LEFT VarList S_BRACKET_RIGHT PARAN_LEFT VarList PARAN_RIGHT NEXT Expression { $$ = new AST_NODE { new AST_Function($5, $8, $2) }; };

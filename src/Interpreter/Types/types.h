@@ -20,19 +20,22 @@ class MS_VALUE;
 using MS_POINTER = std::shared_ptr<MS_VALUE>;
 class Enviourment;
 void deleteEnv(Enviourment* env);
+class Context;
 
 void __initString(MS_VALUE *str);
 void __initArray(MS_VALUE *arr);
 
 class _MS_Function {
     public:
+    Context* ctx;
     Enviourment* scope;
     std::vector<std::string> params;
     AST_NODE* body;
 
-    _MS_Function(AST_NODE* bod, std::vector<std::string> &params, Enviourment* env) : params(params) {
+    _MS_Function(AST_NODE* bod, std::vector<std::string> &params, Enviourment* env, Context* ctx) : params(params) {
         body = bod;
         scope = env;
+        this->ctx = ctx;
     };
 
     ~_MS_Function() {

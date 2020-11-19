@@ -33,6 +33,10 @@ let fizzbuzz2 = (n) => {
    return rel;
 };
 
+const fnThatTakesObj = (obj) => {
+   return obj.a + obj.b;
+};
+
 let fn = (a) => {
    //fizzbuzz1(100);
    const arr = [1, 2, 3, 4, 5, 6];
@@ -41,5 +45,5 @@ let fn = (a) => {
    res = arr;
    res[0] = 15;
    res.fib = fibonacci;
-   return res.fib(10);
+   return res.reduce((acc, n) => acc + n, 100);
 };

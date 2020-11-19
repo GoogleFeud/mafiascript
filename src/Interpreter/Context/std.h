@@ -112,6 +112,37 @@ void __initArray(MS_VALUE *arr) {
         auto res = std::vector<MS_POINTER>(val->entries.begin() + start, val->entries.begin() + start + len);
         return MS_VALUE::make(res);
     });
+    arr->properties["filter"] = MS_VALUE::make([val](std::vector<MS_POINTER> params) -> MS_POINTER {
+        std::vector<MS_POINTER> res;
+        if (!params[0] || params[0]->index() != MS_Types::T_FUNCTION) throw std::runtime_error("Filter function accepts only a function!");
+        MS_Function fn = params[0]->downcast<MS_Function>();
+        for (MS_POINTER value : val->entries) {
+            std::vector param = std::vector {value};
+            if (!_callFunction(fn->ctx, fn, param)->isFalsey()) res.push_back(value);
+        };
+        return MS_VALUE::make(res);
+    });
+    arr->properties["map"] = MS_VALUE::make([val](std::vector<MS_POINTER> params) -> MS_POINTER {
+        std::vector<MS_POINTER> res;
+        if (!params[0] || params[0]->index() != MS_Types::T_FUNCTION) throw std::runtime_error("Map function accepts only a function!");
+        MS_Function fn = params[0]->downcast<MS_Function>();
+        for (MS_POINTER value : val->entries) {
+            std::vector param = std::vector {value};
+            res.push_back(_callFunction(fn->ctx, fn, param));
+        };
+        return MS_VALUE::make(res);
+    });
+    arr->properties["reduce"] = MS_VALUE::make([val](std::vector<MS_POINTER> params) -> MS_POINTER {
+        std::vector<MS_POINTER> res;
+        if (!params[0] || params[0]->index() != MS_Types::T_FUNCTION) throw std::runtime_error("Reduce function accepts only a function!");
+        MS_Function fn = params[0]->downcast<MS_Function>();
+        MS_POINTER accumulator = params[1] ? params[1]:MS_VALUE::make(0.f);
+        for (MS_POINTER value : val->entries) {
+            std::vector param = std::vector {accumulator, value};
+            accumulator = _callFunction(fn->ctx, fn, param);
+        };
+        return accumulator;
+    });
     arr->properties["at"] = MS_VALUE::make([val](std::vector<MS_POINTER> params) -> MS_POINTER {
         return val->entries[params.size() ? params[0]->toNumber():0];
     });
