@@ -99,11 +99,11 @@ public:
                 if (el->index() == AST_Types::MS_ACCESS_POINT) {
                     auto propKey = downcast<AST_Access_Point*>(el)->value;
                     if (last->isNull()) throw std::runtime_error("Cannot read property " + propKey + " of null");
-                    last = (*last)[propKey];
+                    last = last->getProperty(propKey);
                 } else {
                     auto propKey = this->executeAST(el, env);
                      if (last->isNull()) throw std::runtime_error("Cannot read property " + propKey->toString() + " of null");
-                     last = (*last)[propKey];
+                     last = last->getProperty(propKey);
                 };
             }; 
             return last;
@@ -152,7 +152,7 @@ public:
                 };
                 return fn(paramVals);
             }
-            else throw std::runtime_error("Cannot call a " + functionObj->typeToString());
+            else throw std::runtime_error("Cannot call " + functionObj->typeToString());
         };
         case AST_Types::MS_BINARY:
         {
@@ -291,4 +291,7 @@ public:
     {
         delete this->global;
     };
+
+    private:
+
 };

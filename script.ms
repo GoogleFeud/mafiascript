@@ -23,15 +23,12 @@ let fizzbuzz2 = (n) => {
    return rel;
 };
 
-
 let fn = (a) => {
-   let arr = [1, 2, 3, 4, 5];
-   let res = fizzbuzz1(100);
-   arr[arr.size()] = 6;
-   arr[arr.size()] = 7;
-   arr[arr.size()] = 8;
-   const arr1 = arr;
-   arr[arr.size()] = 9;
-   arr[arr.size() - 1] /= 2;
-   return arr[arr.size() - 1];
+   //let res = fizzbuzz1(100);
+   const arr = [1, 2, 3, 4, 5, 6];
+   let res = "Hello";
+   res = "Hell";
+   res = arr;
+   res[0] = 15;
+   return res[0];
 };

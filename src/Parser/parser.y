@@ -42,7 +42,7 @@ AST_Block* prog;
 %type <node> Statement
 %type <node> Line Any
 %type <node> Block
-%type <node> If Define Binary_Operation Assign Literal Ternery Array Object Function Return Loop LoopBeforeInit And_Or Typeof Call Accessor Binary_Statement LoopAfterInit Boolean_Operation
+%type <node> If Define Binary_Operation Assign Literal Ternery Array Object Function Return Loop LoopBeforeInit And_Or Typeof Call Accessor Binary_Statement LoopAfterInit Boolean_Operation WrappedExpression
 %type <block> Input 
 %type <list> ExpressionList VarList
 %type <pairList> PairList
@@ -86,12 +86,10 @@ Boolean_Operation;
 | Accessor;
 | Literal;
 | Ternery;
-| Array;
-| Object;
 | Function;
 | Call;
 | Typeof;
-| PARAN_LEFT Expression PARAN_RIGHT {$$ = $2; };
+| WrappedExpression;
 
 Statement: 
 If
@@ -100,6 +98,9 @@ If
 | Loop;
 | Binary_Statement;
 | Assign;
+
+WrappedExpression:
+PARAN_LEFT Expression PARAN_RIGHT { $$ = $2; };
 
 Array:
 S_BRACKET_LEFT ExpressionList S_BRACKET_RIGHT {$$ = new AST_NODE { new AST_Array($2) }; };
@@ -114,11 +115,13 @@ Function:
 | S_BRACKET_LEFT VarList S_BRACKET_RIGHT PARAN_LEFT VarList PARAN_RIGHT NEXT Expression { $$ = new AST_NODE { new AST_Function($5, $8, $2) }; };
 
 Literal:
-NUMBER
-| ID
-| STRING
-| BOOL
-| _NULL
+NUMBER;
+| ID;
+| STRING;
+| BOOL;
+| Array;
+| Object;
+| _NULL;
 
 If: IF PARAN_LEFT Expression PARAN_RIGHT Any { $$ = new AST_NODE { new AST_If($3, $5, NULL) }; };
 | IF PARAN_LEFT And_Or PARAN_RIGHT Any { $$ = new AST_NODE { new AST_If($3, $5, NULL) }; };
@@ -199,6 +202,8 @@ ID PARAN_LEFT ExpressionList PARAN_RIGHT { $$ = new AST_NODE { new AST_Call($3, 
 Accessor:
 Literal DOT ID {$$ = new AST_NODE { new AST_Accessor($1, new AST_NODE { new AST_Access_Point($3) }) }; };
 | Literal S_BRACKET_LEFT Expression S_BRACKET_RIGHT {$$ = new AST_NODE { new AST_Accessor($1, $3) }; };
+| WrappedExpression DOT ID {$$ = new AST_NODE { new AST_Accessor($1, new AST_NODE { new AST_Access_Point($3) }) }; };
+| WrappedExpression S_BRACKET_LEFT Expression S_BRACKET_RIGHT S_BRACKET_RIGHT {$$ = new AST_NODE { new AST_Accessor($1, $3) }; };
 | Call DOT ID {$$ = new AST_NODE { new AST_Accessor($1, new AST_NODE { new AST_Access_Point($3) }) }; };
 | Call S_BRACKET_LEFT Expression S_BRACKET_RIGHT {$$ = new AST_NODE { new AST_Accessor($1, $3) }; };
 | Accessor DOT ID { downcast<AST_Accessor*>($$)->push(new AST_NODE { new AST_Access_Point($3) }); };

@@ -15,10 +15,14 @@ enum MS_Types {
 };
 ;
 
+
 class MS_VALUE;
 using MS_POINTER = std::shared_ptr<MS_VALUE>;
 class Enviourment;
 void deleteEnv(Enviourment* env);
+
+void __initString(MS_VALUE *str);
+void __initArray(MS_VALUE *arr);
 
 class MS_Function {
     public:
@@ -38,7 +42,6 @@ class MS_Function {
 
 }; 
 
-
 class MS_Array {
     public:
     std::vector<MS_POINTER> entries;
@@ -53,14 +56,16 @@ using C_Function = std::function<MS_POINTER(std::vector<MS_POINTER>)>;
 using RAW_MS_VALUE = std::variant<std::string, float, bool, std::nullptr_t, MS_Array*, MS_Function*, C_Function>;
 
 class MS_VALUE {
-    public:
+    public: 
     RAW_MS_VALUE value;
     std::unordered_map<std::string, MS_POINTER> properties;
     bool isConst = false;
 
     MS_VALUE(const std::string &str) {
         value = str;
+        __initString(this);
     };
+
     MS_VALUE(float num) {
         value = num;
     };
@@ -75,9 +80,7 @@ class MS_VALUE {
 
     MS_VALUE(std::vector<MS_POINTER> &arr) {
         value = new MS_Array(arr);
-        properties.insert({"size", MS_VALUE::make([&](std::vector<MS_POINTER> params) -> MS_POINTER {
-            return MS_VALUE::make((float)this->downcast<MS_Array*>()->entries.size());
-        })});
+        __initArray(this);
     };
 
     MS_VALUE(MS_Function *fn) {
@@ -101,8 +104,8 @@ class MS_VALUE {
 
     void set(MS_POINTER &val) {
         if (isConst) throw std::runtime_error("Cannot assign to a constant variable");
-        value = val->value;
-        properties = val->properties;
+        this->value = val->value;
+        this->properties = val->properties;
     };
 
     template<typename T>
@@ -205,8 +208,8 @@ class MS_VALUE {
         return std::make_shared<MS_VALUE>(fn);
     }
 
-    MS_POINTER operator[](MS_POINTER &inside) {
-        if (inside->index() == MS_Types::T_NUMBER && value.index() == MS_Types::T_ARRAY) {
+    MS_POINTER getProperty(MS_POINTER &inside) {
+            if (inside->index() == MS_Types::T_NUMBER && value.index() == MS_Types::T_ARRAY) {
             MS_Array* arr = downcast<MS_Array*>();
             float index = inside->downcast<float>();
             if (index >= arr->entries.size()) {
@@ -224,9 +227,10 @@ class MS_VALUE {
             return null;
         }
         return this->properties[propName];
-    };
+    }
 
-    MS_POINTER operator[](std::string &propName) {
+
+    MS_POINTER getProperty(std::string &propName) {
         if (!this->properties.count(propName)) {
             auto null = MS_VALUE::make();
             this->properties[propName] = null;
@@ -238,11 +242,6 @@ class MS_VALUE {
     bool hasProperty(std::string &propName) {
         return this->properties.count(propName);
     };
-
-    ~MS_VALUE() {
-        if (value.index() == MS_Types::T_ARRAY) delete this->downcast<MS_Array*>();
-        else if (value.index() == MS_Types::T_FUNCTION) delete this->downcast<MS_Function*>();
-    }; 
 
 };
 

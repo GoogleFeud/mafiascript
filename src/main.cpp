@@ -2,7 +2,7 @@
 #include <iostream>
 #include <fstream>
 
-#include "./Interpreter/Context/Context.h"
+#include "./Interpreter/Context/std.h"
 
 #include <chrono>
 using namespace std::chrono;
@@ -37,6 +37,7 @@ int main()
         };
         return MS_VALUE::make();
     });
+    fnVal->isConst = true;
     ctx->global->unsafeSet(fnName, fnVal);
     MS_POINTER res = ctx->callFunction(fn, params);
     auto stop = high_resolution_clock::now();
@@ -44,7 +45,6 @@ int main()
     std::cout << "Time function took: " << duration.count() << " microseconds!"<<std::endl;;
     std::cout<<res->toString()<<std::endl;  
     ctx->global->clear();
-    std::cout<<fn.use_count()<<std::endl;
     system("pause");
     return 0;
 }
