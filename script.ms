@@ -23,26 +23,18 @@ let fizzbuzz1 = (n) => {
    };
 }; 
 
-let fizzbuzz2 = (n) => {
-   let rel = "";
-   loop (let i = 1, i <= 100, i++) {
-      if ((i % 3) == 0) rel += "\nFizz"
-      else if ((i % 5) == 0) rel += "\nBuzz"
-      else rel += "\n" + i;
-   };
-   return rel;
-};
 
 const fnThatTakesObj = (obj) => {
    return obj.a + obj.b;
 };
 
+const res = (array, x) => {
+  if (array.size() >= 10) return true
+  else return false;
+};
+
 let fn = (a) => {
-   fizzbuzz1(100);
-   const arr = [1, 2, 3, 4, 5, 6];
-   let res = "Hello";
-   res = "Hell";
-   res = arr;
-   res.fib = fibonacci;
-   return res.fib(10);
+   const arr = [].fill(null, 50);
+   let mapped = arr.map((el, index) => fibonacci(index));
+   return mapped.reduce((acc, i) => acc + i);
 };

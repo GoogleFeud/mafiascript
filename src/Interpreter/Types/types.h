@@ -53,6 +53,7 @@ class _MS_Array {
     _MS_Array(std::vector<MS_POINTER> &values) : entries(values) {
     };
     _MS_Array() {};
+
 };
 
 
@@ -252,6 +253,7 @@ class MS_VALUE {
     bool hasProperty(std::string &propName) {
         return this->properties.count(propName);
     };
+
 
 };
 

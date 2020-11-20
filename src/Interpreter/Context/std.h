@@ -138,9 +138,10 @@ void __initArray(MS_VALUE *arr) {
         std::vector<MS_POINTER> res;
         if (!params[0] || params[0]->index() != MS_Types::T_FUNCTION) throw std::runtime_error("Filter function accepts only a function!");
         MS_Function fn = params[0]->downcast<MS_Function>();
-        for (MS_POINTER value : val->entries) {
-            std::vector param = std::vector {value};
-            if (!_callFunction(fn->ctx, fn, param)->isFalsey()) res.push_back(value);
+        auto valSize = val->entries.size();
+        for (int i=0; i < valSize; i++) {
+            std::vector param = std::vector {val->entries[i], MS_VALUE::make((float)i)};
+            if (!_callFunction(fn->ctx, fn, param)->isFalsey()) res.push_back(val->entries[i]);
         };
         return MS_VALUE::make(res);
     });
@@ -148,8 +149,9 @@ void __initArray(MS_VALUE *arr) {
         std::vector<MS_POINTER> res;
         if (!params[0] || params[0]->index() != MS_Types::T_FUNCTION) throw std::runtime_error("Map function accepts only a function!");
         MS_Function fn = params[0]->downcast<MS_Function>();
-        for (MS_POINTER value : val->entries) {
-            std::vector param = std::vector {value};
+        auto valSize = val->entries.size();
+        for (int i =0; i < valSize; i++) {
+            std::vector param = std::vector {val->entries[i], MS_VALUE::make((float)i)};
             res.push_back(_callFunction(fn->ctx, fn, param));
         };
         return MS_VALUE::make(res);
