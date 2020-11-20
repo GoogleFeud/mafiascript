@@ -267,7 +267,8 @@ public:
         Enviourment *newEnv = func->scope->extend();
         for (int i = 0; i < size; i++)
         {
-            newEnv->define(func->params[i], params[i]);
+             auto param = params.size() > i ? params[i]:MS_VALUE::make();
+            newEnv->define(func->params[i], param);
         };
         auto val = this->executeAST(func->body, newEnv);
         delete newEnv;
@@ -281,7 +282,8 @@ public:
         Enviourment *newEnv = func->scope->extend();
         for (int i = 0; i < size; i++)
         {
-            newEnv->define(func->params[i], params[i]);
+            auto param = params.size() > i ? params[i]:MS_VALUE::make();
+            newEnv->define(func->params[i], param);
         };
         auto val = this->executeAST(func->body, newEnv);
         delete newEnv;
