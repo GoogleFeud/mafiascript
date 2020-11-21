@@ -12,7 +12,15 @@ Context* eval() {
     std::ifstream ifs("script.ms");
     std::string code( (std::istreambuf_iterator<char>(ifs) ), (std::istreambuf_iterator<char>() ) );
     Context* ctx = new Context();
-    //ctx->settings.loopTimeout = 5000;
+    std::string fnName = "print";
+    auto fnVal = MS_VALUE::make([&](std::vector<MS_POINTER> vals) -> MS_POINTER {
+        for (MS_POINTER val : vals) {
+            std::cout<<val->toString() + "\n";
+        };
+        return MS_VALUE::make();
+    });
+    fnVal->isConst = true;
+    ctx->global->unsafeSet(fnName, fnVal);
     auto start = high_resolution_clock::now();
     ctx->run(code);
     auto stop = high_resolution_clock::now();
@@ -30,15 +38,6 @@ int main()
   MS_POINTER fn = ctx->global->get(key);
   auto start = high_resolution_clock::now();
     std::vector params = {MS_VALUE::make(1.f), MS_VALUE::make(15.f)};
-    std::string fnName = "print";
-    auto fnVal = MS_VALUE::make([&](std::vector<MS_POINTER> vals) -> MS_POINTER {
-        for (MS_POINTER val : vals) {
-            std::cout<<val->toString() + "\n";
-        };
-        return MS_VALUE::make();
-    });
-    fnVal->isConst = true;
-    ctx->global->unsafeSet(fnName, fnVal);
     MS_POINTER res = ctx->callFunction(fn, params);
     auto stop = high_resolution_clock::now();
     auto duration = duration_cast<microseconds>(stop - start);

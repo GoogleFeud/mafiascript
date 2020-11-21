@@ -18,15 +18,8 @@ let fizzbuzz1 = (n) => {
    };
 }; 
 
-let fn = (a) => {
+fizzbuzz1(100);
 
-let fibonacci2;
-fibonacci2 = [fibonacci2](n) => {
-    if (n < 1) return 0;
-    if (n <= 2) return 1;
-    return fibonacci2(n - 1) + fibonacci2(n - 2);
- };
- 
-
-return fibonacci2(5);
+let fn = (a, b) => {
+   return 1;
 };

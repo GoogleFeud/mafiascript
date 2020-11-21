@@ -7,16 +7,10 @@
 #include "../../Parser/index.h"
 #include "./util.h"
 
-struct ContextSettings
-{
-    float loopTimeout = 0;
-};
-
 class Context
 {
 public:
     Enviourment *global = new Enviourment();
-    ContextSettings settings;
 
     void run(std::string &code)
     {
@@ -27,7 +21,7 @@ public:
     {
         this->executeAST(new AST_NODE{code}, this->global);
     };
-
+    
     MS_POINTER executeAST(AST_NODE *node, Enviourment *env)
     {
         if (node == NULL) return MS_VALUE::make();
@@ -216,28 +210,21 @@ public:
         case AST_Types::MS_LOOP: {
             AST_Loop *loop = downcast<AST_Loop *>(node);
             Enviourment *newEnv = env->extend();
-            this->executeAST(loop->before, newEnv);
-            if (this->settings.loopTimeout > 0) {
-                auto start = std::chrono::high_resolution_clock::now();
-                while (!this->executeAST(loop->condition, newEnv)->isFalsey()) {
+            this->executeAST(loop->before, newEnv);;
+             while (!this->executeAST(loop->condition, newEnv)->isFalsey()) {
+                    auto tempEnv = newEnv->extend();
                     auto block = downcast<AST_Block *>(loop->body);
                     for (AST_NODE *nd : block->nodes) {
-                        auto res = this->executeAST(nd, newEnv);
-                        if (res->index() != MS_Types::T_NULL && (nd->index() == AST_Types::MS_IF || nd->index() == AST_Types::MS_LOOP)) return res;
+                        auto res = this->executeAST(nd, tempEnv);
+                        if (res->index() != MS_Types::T_NULL && (nd->index() == AST_Types::MS_IF || nd->index() == AST_Types::MS_LOOP)) {
+                            delete newEnv;
+                            delete tempEnv;
+                            return res;
+                        }
                     };
-                    if (std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - start).count() > this->settings.loopTimeout)
-                        throw std::runtime_error("Loop timeout exceeded.");
+                    delete tempEnv;
                 };
-            }
-            else {
-                while (!this->executeAST(loop->condition, newEnv)->isFalsey()) {
-                    auto block = downcast<AST_Block *>(loop->body);
-                    for (AST_NODE *nd : block->nodes) {
-                        auto res = this->executeAST(nd, newEnv);
-                        if (res->index() != MS_Types::T_NULL && (nd->index() == AST_Types::MS_IF || nd->index() == AST_Types::MS_LOOP)) return res;
-                    };
-                };
-            };
+            delete newEnv; 
             return MS_VALUE::make();
         };
         case AST_Types::MS_BLOCK: {
