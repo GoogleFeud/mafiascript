@@ -101,7 +101,16 @@ class AST_Object {
 class AST_Var {
     public:
     std::string value;
-    AST_Var(std::string &val) : value(val) {};
+    AST_NODE* defaultValue;
+    AST_Var(std::string &val) : value(val) {}
+    AST_Var(std::string &val, AST_NODE* defaultVal) : value(val) {
+        defaultValue = defaultVal;
+    }
+
+    ~AST_Var() {
+        delete defaultValue;
+    }
+
 };
 
 class AST_Access_Point {

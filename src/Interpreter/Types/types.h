@@ -31,10 +31,10 @@ class _MS_Function {
     public:
     Context* ctx;
     Enviourment* scope;
-    std::vector<std::string> params;
+    std::vector<AST_Var*> params;
     AST_NODE* body;
 
-    _MS_Function(AST_NODE* bod, std::vector<std::string> &params, Enviourment* env, Context* ctx) : params(params) {
+    _MS_Function(AST_NODE* bod, std::vector<AST_Var*> &params, Enviourment* env, Context* ctx) : params(params) {
         body = bod;
         scope = env;
         this->ctx = ctx;
@@ -104,6 +104,7 @@ class MS_VALUE {
     MS_VALUE(std::unordered_map<std::string, MS_POINTER> &map) {
         properties = map;
     };
+
     MS_VALUE(MS_VALUE (*fn)(std::vector<MS_VALUE>, Enviourment* env)) {
         value = fn;
     };

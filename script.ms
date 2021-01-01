@@ -1,25 +1,27 @@
- 
-let fibonacci = (n) => {
-   if (!n) return 0;
-   const arr = [0, 1];
-   loop (let i=2, i <= n, i += 1) {
-      arr[i] = arr[i - 1] + arr[i - 2];
+
+
+const Person = (name, color = "black", age) => {
+   const obj = {
+      "name": name,
+      "color": color,
+      "colour": color,
+      "age": age
    };
-   return arr[n];
+
+   obj.isUnderage = [obj](minAge = 18) => {
+      if (obj.age < minAge) return true;
+      return false;
+   };
+
+   return obj;
 };
 
+const people = [];
 
-let fizzbuzz1 = (n) => {
-   loop (let i = 1, i <= n, i++) {
-      if ((i % 3) == 0 && (i % 5) == 0) print("FizzBuzz")
-      else if ((i % 3) == 0) print("Fizz")
-      else if ((i % 5) == 0) print("Buzz")
-      else print(i); 
-   };
-}; 
+loop (let i=0, i < 10000, i++) {
+   people.push(Person("", null, i.copy()));
+};
 
-fizzbuzz1(100);
-
-let fn = (a, b) => {
-   return 1;
+let main = (a, b) => {
+   return people.map((p) => p.age);
 };

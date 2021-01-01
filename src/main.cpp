@@ -34,7 +34,7 @@ int main()
 {
 
     Context* ctx = eval();
-    std::string key = "fn";
+    std::string key = "main";
   MS_POINTER fn = ctx->global->get(key);
   auto start = high_resolution_clock::now();
     std::vector params = {MS_VALUE::make(1.f), MS_VALUE::make(15.f)};
@@ -43,7 +43,7 @@ int main()
     auto duration = duration_cast<microseconds>(stop - start);
     std::cout << "Time function took: " << duration.count() << " microseconds!"<<std::endl;;
     std::cout<<res->toString()<<std::endl;  
-    ctx->global->clear();
+    //ctx->global->clear();
     system("pause");
     return 0;
 }

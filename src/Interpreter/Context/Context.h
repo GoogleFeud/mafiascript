@@ -254,8 +254,10 @@ public:
         Enviourment *newEnv = func->scope->extend();
         for (int i = 0; i < size; i++)
         {
-             auto param = params.size() > i ? params[i]:MS_VALUE::make();
-            newEnv->define(func->params[i], param);
+            auto astParam = func->params[i];
+            auto param = params.size() > i ? params[i]:MS_VALUE::make();
+            if (param->index() == MS_Types::T_NULL && astParam->defaultValue != nullptr) param = executeAST(astParam->defaultValue, newEnv);
+            newEnv->define(astParam->value, param);
         };
         auto val = this->executeAST(func->body, newEnv);
         delete newEnv;
@@ -269,8 +271,10 @@ public:
         Enviourment *newEnv = func->scope->extend();
         for (int i = 0; i < size; i++)
         {
+            auto astParam = func->params[i];
             auto param = params.size() > i ? params[i]:MS_VALUE::make();
-            newEnv->define(func->params[i], param);
+            if (param->index() == MS_Types::T_NULL && astParam->defaultValue != nullptr) param = executeAST(astParam->defaultValue, newEnv);
+            newEnv->define(astParam->value, param);
         };
         auto val = this->executeAST(func->body, newEnv);
         delete newEnv;

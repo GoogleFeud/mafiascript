@@ -78,7 +78,15 @@ PairList: %empty {$$ = new AST_PairList; };
 
 VarList: %empty { $$ = new AST_List; };
 | ID {$$ = new AST_List($1); };
+| ID ASSIGN Expression { 
+    downcast<AST_Var*>($1)->defaultValue = $3; 
+    $$ = new AST_List($1); 
+    };
 | VarList COMMA ID { $$->push($3); };
+| VarList COMMA ID ASSIGN Expression {
+    downcast<AST_Var*>($3)->defaultValue = $5;
+    $$->push($3); 
+    };
  
 
 Expression: 

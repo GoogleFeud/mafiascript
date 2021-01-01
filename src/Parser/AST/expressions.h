@@ -93,21 +93,21 @@ class AST_Or {
 
 class AST_Function {
     public:
-    std::vector<std::string> params;
+    std::vector<AST_Var*> params;
     std::vector<std::string> captures;
     AST_NODE* body;
 
     AST_Function(AST_List *params, AST_NODE* body) {
         for (AST_NODE* node : params->entries) {
-           this->params.push_back(downcast<AST_Var*>(node)->value);
+           this->params.push_back(downcast<AST_Var*>(node));
         };
         delete params;
         this->body = body;
     };
 
-        AST_Function(AST_List *params, AST_NODE* body, AST_List *captures) {
+    AST_Function(AST_List *params, AST_NODE* body, AST_List *captures) {
         for (AST_NODE* node : params->entries) {
-           this->params.push_back(downcast<AST_Var*>(node)->value);
+           this->params.push_back(downcast<AST_Var*>(node));
         };
         delete params;
         for (AST_NODE* node : captures->entries) {
@@ -116,7 +116,7 @@ class AST_Function {
         delete captures;
         this->body = body;
     };
-
+    
     ~AST_Function() {
         delete body;
     };
