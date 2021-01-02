@@ -42,6 +42,10 @@ class _MS_Function {
 
     ~_MS_Function() {
         deleteEnv(scope);
+        for (AST_Var* param : params) {
+            delete param;
+        }
+
         delete body;
     };
 
@@ -105,7 +109,7 @@ class MS_VALUE {
         properties = map;
     };
 
-    MS_VALUE(MS_VALUE (*fn)(std::vector<MS_VALUE>, Enviourment* env)) {
+    MS_VALUE(MS_VALUE (*fn)(std::vector<MS_VALUE>)) {
         value = fn;
     };
 
@@ -158,7 +162,7 @@ class MS_VALUE {
                 return (val) ? "true":"false";
             };
             case MS_Types::T_NULL: return "null";
-            case MS_Types::T_ARRAY: return (properties["toString"]->downcast<C_Function>())(std::vector<MS_POINTER> {})->downcast<std::string>();
+            case MS_Types::T_ARRAY: return "[" + (properties["toString"]->downcast<C_Function>())(std::vector<MS_POINTER> {})->downcast<std::string>() + "]";
             default: throw std::runtime_error("Type " + typeToString() + " cannot be converted to a string!");
         };
     };
@@ -218,6 +222,19 @@ class MS_VALUE {
 
     static MS_POINTER make(C_Function fn) {
         return std::make_shared<MS_VALUE>(fn);
+    }
+    
+    static MS_POINTER pass(MS_POINTER &passable) {
+        switch (passable->index()) {
+            case MS_Types::T_NUMBER: 
+            return MS_VALUE::make(passable->downcast<float>());
+
+            case MS_Types::T_BOOL: 
+            return MS_VALUE::make(passable->downcast<bool>());
+
+            default:
+            return passable;
+        }
     }
 
     MS_POINTER getProperty(MS_POINTER &inside) {

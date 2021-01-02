@@ -218,9 +218,6 @@ void __initNumber(MS_VALUE* num) {
         auto powerOf = params[0] && params[0]->index() == MS_Types::T_NUMBER ? params[0]->downcast<float>():1;
         return MS_VALUE::make(std::pow(val, powerOf));
     });
-    num->properties["copy"] = MS_VALUE::make([val](std::vector<MS_POINTER> params) -> MS_POINTER {
-        return MS_VALUE::make(val);
-    });
 }
 
 void __initBoolean(MS_VALUE* boolean) {

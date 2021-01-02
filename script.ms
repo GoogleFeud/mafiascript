@@ -1,27 +1,31 @@
 
 
-const Person = (name, color = "black", age) => {
-   const obj = {
-      "name": name,
-      "color": color,
-      "colour": color,
-      "age": age
+const contains = (arr, value = 0) => {
+   const arrSize = arr.size();
+   loop (let i=0, i < arrSize, i++) {
+      if (arr[i] == value) return true;
    };
-
-   obj.isUnderage = [obj](minAge = 18) => {
-      if (obj.age < minAge) return true;
-      return false;
-   };
-
-   return obj;
+   return false;
 };
 
-const people = [];
 
-loop (let i=0, i < 10000, i++) {
-   people.push(Person("", null, i.copy()));
+const Set = (arr = []) => {
+   const set = arr;
+
+   set.push = [set](value) => {
+      if (contains(set, value)) return;
+      set.push(value);
+   };
+
+   set.has = [set](value) => {
+      return contains(set, value);
+   };
+
+   return set;
 };
 
 let main = (a, b) => {
-   return people.map((p) => p.age);
+   const mySet = Set([1, 2, 3]);
+   mySet.push(1);
+   return mySet.has(2);
 };

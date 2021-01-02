@@ -132,7 +132,8 @@ public:
                 std::vector<MS_POINTER> paramVals;
                 for (AST_NODE *val : call->params->entries)
                 {
-                    paramVals.push_back(this->executeAST(val, env));
+                    auto ex = this->executeAST(val, env);
+                    paramVals.push_back(MS_VALUE::pass(ex));
                 };
                 return this->callFunction(functionObj, paramVals);
             }
@@ -174,8 +175,9 @@ public:
         case AST_Types::MS_DECLARE: {
             AST_Declare *declare = downcast<AST_Declare *>(node);
             auto val = this->executeAST(declare->value, env);
-            if (declare->isConst) val->isConst = true;
-            env->define(declare->name, val);
+            auto passedValue = MS_VALUE::pass(val);
+            if (declare->isConst) passedValue->isConst = true;
+            env->define(declare->name, passedValue);
             return MS_VALUE::make();
         };
         case AST_Types::MS_IF:
