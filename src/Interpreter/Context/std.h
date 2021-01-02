@@ -81,8 +81,9 @@ void __initArray(MS_VALUE *arr) {
         return MS_VALUE::make((float)val->entries.size());
     });
     arr->properties["pop"] = MS_VALUE::make([val](std::vector<MS_POINTER> params) -> MS_POINTER {
+        auto lastEl = val->entries[val->entries.size() - 1];
         val->entries.pop_back();
-        return MS_VALUE::make();
+        return lastEl;
     });
     arr->properties["join"] = MS_VALUE::make([val](std::vector<MS_POINTER> params) -> MS_POINTER {
         std::string joinedBy = params.size() ? params[0]->toString():"";
@@ -187,6 +188,21 @@ void __initArray(MS_VALUE *arr) {
     });
     arr->properties["at"] = MS_VALUE::make([val](std::vector<MS_POINTER> params) -> MS_POINTER {
         return val->entries[params.size() ? params[0]->toNumber():0];
+    });
+    arr->properties["insert"] = MS_VALUE::make([val](std::vector<MS_POINTER> params) -> MS_POINTER {
+        auto toAdd = params[0] ? params[0]:MS_VALUE::make();
+        val->entries.insert(val->entries.begin(), toAdd);
+        return toAdd;
+    });
+    arr->properties["each"] = MS_VALUE::make([val](std::vector<MS_POINTER> params) -> MS_POINTER {
+        auto fnObj = params[0];
+        if (!fnObj || fnObj->index() != MS_Types::T_FUNCTION) throw std::runtime_error("Each function accepts only a function!");
+        auto fn = fnObj->downcast<MS_Function>();
+        for (MS_POINTER value : val->entries) {
+            std::vector param = std::vector {value};
+            _callFunction(fn->ctx, fn, param);
+        }
+        return MS_VALUE::make();
     });
 }; 
 

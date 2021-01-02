@@ -64,6 +64,8 @@ class _MS_Array {
 using MS_Function = std::shared_ptr<_MS_Function>;
 using MS_Array = std::shared_ptr<_MS_Array>;
 
+MS_POINTER _callFunction(Context* ctx, MS_Function &fn, std::vector<MS_POINTER> &params);
+
 using C_Function = std::function<MS_POINTER(std::vector<MS_POINTER>)>;
 using RAW_MS_VALUE = std::variant<std::string, float, bool, std::nullptr_t, MS_Array, MS_Function, C_Function>;
 
@@ -163,7 +165,22 @@ class MS_VALUE {
             };
             case MS_Types::T_NULL: return "null";
             case MS_Types::T_ARRAY: return "[" + (properties["toString"]->downcast<C_Function>())(std::vector<MS_POINTER> {})->downcast<std::string>() + "]";
-            default: throw std::runtime_error("Type " + typeToString() + " cannot be converted to a string!");
+            default: {
+                if (properties["toString"]) {
+                    auto prop = properties["toString"];
+                    switch (prop->index()) {
+                        case MS_Types::C_FUNCTION:
+                        return (prop->downcast<C_Function>())(std::vector<MS_POINTER> {})->toString();
+
+                        case MS_Types::T_FUNCTION: {
+                            auto func = prop->downcast<MS_Function>();
+                            auto params = std::vector<MS_POINTER> {};
+                            return _callFunction(func->ctx, func, params)->toString();
+                        }
+                    }
+                }
+                throw std::runtime_error("Type " + typeToString() + " cannot be converted to a string!");
+            }
         };
     };
 
