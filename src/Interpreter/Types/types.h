@@ -26,6 +26,7 @@ void __initString(MS_VALUE *str);
 void __initArray(MS_VALUE *arr);
 void __initNumber(MS_VALUE *num);
 void __initBoolean(MS_VALUE *boo);
+void __initFunc(MS_VALUE *func);
 
 class _MS_Function {
     public:
@@ -101,6 +102,7 @@ class MS_VALUE {
 
     MS_VALUE(MS_Function &fn) {
         value = fn;
+        __initFunc(this);
     }
 
     MS_VALUE(C_Function fn) {

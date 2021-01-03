@@ -242,3 +242,14 @@ void __initBoolean(MS_VALUE* boolean) {
         return MS_VALUE::make(val ? "true":"false");
     });
 }
+
+void __initFunc(MS_VALUE* func) {
+    MS_Function fn = func->downcast<MS_Function>();
+    func->properties["params"] = MS_VALUE::make([fn](std::vector<MS_POINTER> params) -> MS_POINTER {
+        std::vector<MS_POINTER> fnParams;
+        for (AST_Var* param : fn->params) {
+            fnParams.push_back(MS_VALUE::make(param->value));
+        }
+        return MS_VALUE::make(fnParams);
+    }); 
+}

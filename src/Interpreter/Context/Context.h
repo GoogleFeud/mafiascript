@@ -254,6 +254,9 @@ public:
     {
         int size = func->params.size();
         Enviourment *newEnv = func->scope->extend();
+        std::string args = "_arguments";
+        auto argsArr = MS_VALUE::make(params);
+        newEnv->unsafeSet(args, argsArr);
         for (int i = 0; i < size; i++)
         {
             auto astParam = func->params[i];
@@ -271,6 +274,9 @@ public:
         MS_Function func = fnObj->downcast<MS_Function>();
         int size = func->params.size();
         Enviourment *newEnv = func->scope->extend();
+        std::string args = "_arguments";
+        auto argsArr = MS_VALUE::make(params);
+        newEnv->unsafeSet(args, argsArr);
         for (int i = 0; i < size; i++)
         {
             auto astParam = func->params[i];

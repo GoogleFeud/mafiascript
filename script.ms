@@ -9,8 +9,8 @@ const contains = (arr, value = 0) => {
 };
 
 
-const Queue = (els = []) => {
-   const q = els;
+const Queue = () => {
+   const q = _arguments;   
 
    q.enqueue = [q](val) => {
       q.insert(val);
@@ -67,25 +67,13 @@ const Map = (entries = []) => {
    return map;
 };
 
-let main = (a, b) => {
-   const arr = [];
-   arr.insert = [arr](val) => {
-      print(val + arr.size());
-   };
+const weirdFn = (firstParam) => {
+   const restParams = _arguments;
+   restParams.delete(0);
+   return "First param is " + firstParam + " the rest are: " + restParams.map((p) => p).join(", ");
+};
 
-   arr.push(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
-
-   const arr2 = arr;
-
-   const insert = arr2.insert;
-
-   const arr3 = [1, 2, 3];
-   arr3.insert = arr.insert;
-
-   const insert2 = arr3.insert;
-
-   insert(10);
-   insert2(1);
-
-   return 1;
+const main = (a, b) => {
+   const myQ = Queue(1, 2, 3, 4, 5, 6);
+   return weirdFn(1, 2, 3, 4, 5, 6, 7, 8, 9);
 };
