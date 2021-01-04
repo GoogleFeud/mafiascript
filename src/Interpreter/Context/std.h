@@ -65,7 +65,11 @@ void __initString(MS_VALUE *str) {
         return std::make_shared<MS_VALUE>(val);
     });
     str->properties["toNumber"] = MS_VALUE::make([val](std::vector<MS_POINTER> params) -> MS_POINTER {
-        return std::make_shared<MS_VALUE>(std::stof(val));
+        try {
+            return std::make_shared<MS_VALUE>(std::stof(val));
+        } catch(...) {
+            return MS_VALUE::make();
+        }
     });
 };
 
@@ -351,4 +355,19 @@ void __initGlobal(Enviourment* env) {
     }); 
 
     env->unsafeSet(std::string{"Object"}, object);
+
+    // NaN
+
+    MS_POINTER NaN = MS_VALUE::make([&](std::vector<MS_POINTER> params) -> MS_POINTER {
+        auto param = params[0];
+        if (!param || param->index() != MS_Types::T_STRING) throw std::runtime_error("Must pass string to NaN");
+        try {
+            std::make_shared<MS_VALUE>(std::stof(param->downcast<std::string>()));
+        } catch(...) {
+            return MS_VALUE::make(true);
+        }
+        return MS_VALUE::make(false);
+    }); 
+
+    env->unsafeSet(std::string{"isNaN"}, NaN);
 }

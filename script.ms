@@ -65,13 +65,6 @@ const Map = (entries = []) => {
 
 
 const main = (a, b) => {
-   const obj = {
-      "str": "Hello",
-      "number": 0.1,
-      "bool": true,
-      "null": null
-  };
-   Object.freeze(obj);
-   obj.str = "World!";
-   print(obj);
+   const obj = {"a": "aaa"};
+   return obj.a.toNumber();
 };

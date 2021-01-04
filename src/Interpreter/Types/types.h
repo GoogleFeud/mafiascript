@@ -328,6 +328,8 @@ bool operator==(MS_POINTER &left, MS_POINTER &right) {
             if (right->index() == MS_Types::T_BOOL) return left->downcast<bool>() == right->downcast<bool>();
             return right->index() != MS_Types::T_NULL;
         };
-        default: throw std::runtime_error("Cannot compare values of type " + left->typeToString() + " and " + right->typeToString());
+        default: {
+            return left.get() == right.get();
+        }
     }
 };

@@ -114,23 +114,3 @@ class AST_Return {
         this->value = val;
     }
 };
-
-class AST_Continue {
-    public:
-    AST_NODE* execute;
-
-    AST_Continue() {
-        this->execute = NULL;
-    };
-
-    AST_Continue(AST_NODE* exec) {
-        execute = exec;
-    };
-
-    ~AST_Continue() {
-        delete execute;
-    };
-
-};
-
-   
