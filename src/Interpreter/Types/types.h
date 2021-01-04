@@ -11,7 +11,8 @@ enum MS_Types {
     T_NULL,
     T_ARRAY,
     T_FUNCTION,
-    C_FUNCTION
+    C_FUNCTION,
+    T_OBJECT
 };
 ;
 
@@ -68,13 +69,17 @@ using MS_Array = std::shared_ptr<_MS_Array>;
 MS_POINTER _callFunction(Context* ctx, MS_Function &fn, std::vector<MS_POINTER> &params);
 
 using C_Function = std::function<MS_POINTER(std::vector<MS_POINTER>)>;
-using RAW_MS_VALUE = std::variant<std::string, float, bool, std::nullptr_t, MS_Array, MS_Function, C_Function>;
+using RAW_MS_VALUE = std::variant<std::string, float, bool, std::nullptr_t, MS_Array, MS_Function, C_Function, MS_Types>;
+
+struct VALUE_FLAGS {
+    unsigned int isConst: 1;
+};
 
 class MS_VALUE {
     public: 
     RAW_MS_VALUE value;
     std::unordered_map<std::string, MS_POINTER> properties;
-    bool isConst = false;
+    VALUE_FLAGS flags;
 
     MS_VALUE(const std::string &str) {
         value = str;
@@ -103,14 +108,15 @@ class MS_VALUE {
     MS_VALUE(MS_Function &fn) {
         value = fn;
         __initFunc(this);
-    }
+    };
 
     MS_VALUE(C_Function fn) {
         value = fn;
-    }
+    };
 
     MS_VALUE(std::unordered_map<std::string, MS_POINTER> &map) {
         properties = map;
+        value = MS_Types::T_OBJECT;
     };
 
     MS_VALUE(MS_VALUE (*fn)(std::vector<MS_VALUE>)) {
@@ -122,9 +128,10 @@ class MS_VALUE {
     };
 
     void set(MS_POINTER &val) {
-        if (isConst) throw std::runtime_error("Cannot assign to a constant variable");
+        if (flags.isConst) throw std::runtime_error("Cannot assign to a constant variable");
         this->value = val->value;
         this->properties = val->properties;
+        this->flags = val->flags;
     };
 
     template<typename T>
@@ -166,23 +173,20 @@ class MS_VALUE {
                 return (val) ? "true":"false";
             };
             case MS_Types::T_NULL: return "null";
-            case MS_Types::T_ARRAY: return "[" + (properties["toString"]->downcast<C_Function>())(std::vector<MS_POINTER> {})->downcast<std::string>() + "]";
-            default: {
-                if (properties["toString"]) {
-                    auto prop = properties["toString"];
-                    switch (prop->index()) {
-                        case MS_Types::C_FUNCTION:
-                        return (prop->downcast<C_Function>())(std::vector<MS_POINTER> {})->toString();
-
-                        case MS_Types::T_FUNCTION: {
-                            auto func = prop->downcast<MS_Function>();
-                            auto params = std::vector<MS_POINTER> {};
-                            return _callFunction(func->ctx, func, params)->toString();
-                        }
-                    }
-                }
-                throw std::runtime_error("Type " + typeToString() + " cannot be converted to a string!");
+            case MS_Types::T_ARRAY: return "[" + (properties["toString"]->downcast<C_Function>())(std::vector<MS_POINTER> {})->toString() + "]";
+            case MS_Types::T_FUNCTION: return "[Function]";
+            case MS_Types::C_FUNCTION: return "[C-Function]";
+            case MS_Types::T_OBJECT: {
+                std::string res = "{";
+                if (properties.size()) res += "\n";
+                for (std::pair<std::string, MS_POINTER> entry : properties) {
+                    if (entry.second->index() == MS_Types::T_OBJECT && entry.second->properties == properties) res += "\"" + entry.first + "\"" + ": " + "[Circular]\n";
+                    else res += "\"" + entry.first + "\"" + ": " + entry.second->toString() + "\n";
+                };
+                res += "}";
+                return res;
             }
+            default: return "unknown";
         };
     };
 
@@ -211,10 +215,6 @@ class MS_VALUE {
     };
 
 
-    static MS_POINTER make(bool val) {
-        return std::make_shared<MS_VALUE>(val);
-    }; 
-
     static MS_POINTER make(float val) {
         return std::make_shared<MS_VALUE>(val);
     };
@@ -242,6 +242,10 @@ class MS_VALUE {
     static MS_POINTER make(C_Function fn) {
         return std::make_shared<MS_VALUE>(fn);
     }
+
+    static MS_POINTER make(bool val) {
+        return std::make_shared<MS_VALUE>(val);
+    }; 
     
     static MS_POINTER pass(MS_POINTER &passable) {
         switch (passable->index()) {

@@ -60,20 +60,18 @@ const Map = (entries = []) => {
       return _size;
    };
 
-   map.toString = [_size]() => {
-      return "Map [" + _size + "]";
-   };
-
    return map;
 };
 
-const weirdFn = (firstParam) => {
-   const restParams = _arguments;
-   restParams.delete(0);
-   return "First param is " + firstParam + " the rest are: " + restParams.map((p) => p).join(", ");
-};
 
 const main = (a, b) => {
-   const myQ = Queue(1, 2, 3, 4, 5, 6);
-   return weirdFn(1, 2, 3, 4, 5, 6, 7, 8, 9);
+   const obj = {
+      "str": "Hello",
+      "number": 0.1,
+      "bool": true,
+      "null": null
+  };
+   Object.freeze(obj);
+   obj.str = "World!";
+   print(obj);
 };

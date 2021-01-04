@@ -1,6 +1,6 @@
 
 #include "./Context.h"
-
+#include "unordered_map"
 
 void __initString(MS_VALUE *str) {
     const std::string val = str->downcast<std::string>();
@@ -102,11 +102,14 @@ void __initArray(MS_VALUE *arr) {
         std::string res = "";
         bool isFirst = true;
         for (MS_POINTER item : val->entries) {
+            std::string str;
+            if (item->index() == MS_Types::T_ARRAY && item->downcast<MS_Array>() == val) str = "[Circular]";
+            else str = item->toString();
             if (isFirst) {
-                res += item->toString();
+                res += str;
                 isFirst = false;
             }
-            else res +=  ", " + item->toString();
+            else res +=  ", " + str;
         };
         return MS_VALUE::make(res);
     });
@@ -252,4 +255,100 @@ void __initFunc(MS_VALUE* func) {
         }
         return MS_VALUE::make(fnParams);
     }); 
+    func->properties["bind"] = MS_VALUE::make([fn](std::vector<MS_POINTER> params) -> MS_POINTER {
+        MS_Function copied = std::make_shared<_MS_Function>(fn->body, fn->params, fn->scope->extend(), fn->ctx);
+        for (int i=0; i < params.size(); i++) {
+            auto paramName = copied->params[i];
+            copied->params.erase(copied->params.begin() + i);
+            copied->scope->unsafeSet(paramName->value, params[i]);
+        };
+        return MS_VALUE::make(copied);
+    }); 
+}
+
+void __initGlobal(Enviourment* env) {
+
+    // Array 
+    MS_POINTER arr = MS_VALUE::make([&](std::vector<MS_POINTER> params) -> MS_POINTER {
+        std::vector<MS_POINTER> arr;
+        return MS_VALUE::make(arr);
+    }); 
+
+    arr->properties["from"] = MS_VALUE::make([env](std::vector<MS_POINTER> params) -> MS_POINTER {
+        auto param = params[0];
+        if (!param) {
+            std::vector<MS_POINTER> arr;
+            return MS_VALUE::make(arr); 
+        };
+        switch (param->index()) {
+            case MS_Types::T_NULL: {
+                std::vector<MS_POINTER> arr;
+                return MS_VALUE::make(arr); 
+            };
+            case MS_Types::T_NUMBER: {
+                std::vector<MS_POINTER> arr;
+                float range = param->downcast<float>();
+                for (int i=0; i < range; i++) {
+                    arr.push_back(MS_VALUE::make((float)i));
+                }
+                return MS_VALUE::make(arr);
+            };
+            case MS_Types::T_STRING: {
+                std::vector<MS_POINTER> arr;
+                std::string str = param->downcast<std::string>();
+                for (char& c : str) {
+                    std::string charStr(1, c);
+                    arr.push_back(MS_VALUE::make(charStr));
+                }
+                return MS_VALUE::make(arr);
+            }
+            case MS_Types::T_ARRAY: {
+                std::vector<MS_POINTER> arr(param->downcast<MS_Array>()->entries);
+                return MS_VALUE::make(arr);
+            }
+
+            case MS_Types::C_FUNCTION:
+            case MS_Types::T_FUNCTION:
+            throw std::runtime_error("Cannot pass function to Array.from");
+
+            default: {
+                std::vector<MS_POINTER> arr;
+                for (std::pair<std::string, MS_POINTER> entry : param->properties) {
+                    arr.push_back(entry.second);
+                }
+                return MS_VALUE::make(arr);
+            }
+        }
+    }); 
+
+    env->unsafeSet(std::string{"Array"}, arr);
+
+    // Object
+
+    MS_POINTER object = MS_VALUE::make([&](std::vector<MS_POINTER> params) -> MS_POINTER {
+        std::unordered_map<std::string, MS_POINTER> obj;
+        return MS_VALUE::make(obj);
+    }); 
+
+    object->properties["entries"] = MS_VALUE::make([object](std::vector<MS_POINTER> params) -> MS_POINTER {
+        auto obj = params[0];
+        if (!obj || obj->index() != MS_Types::T_OBJECT) throw std::runtime_error("Must pass an object to Object.entries");
+        std::vector<MS_POINTER> entries;
+        for (std::pair<std::string, MS_POINTER> entry : obj->properties) {
+            std::vector<MS_POINTER> entryArr {MS_VALUE::make(entry.first), entry.second};
+            entries.push_back(MS_VALUE::make(entryArr));
+        }
+        return MS_VALUE::make(entries);
+    }); 
+
+    object->properties["freeze"] = MS_VALUE::make([object](std::vector<MS_POINTER> params) -> MS_POINTER {
+        auto obj = params[0];
+        if (!obj || obj->index() != MS_Types::T_OBJECT) throw std::runtime_error("Must pass an object to Object.copy");
+        for (std::pair<std::string, MS_POINTER> entry : obj->properties) {
+            entry.second->flags.isConst = true;
+        }
+        return MS_VALUE::make();
+    }); 
+
+    env->unsafeSet(std::string{"Object"}, object);
 }

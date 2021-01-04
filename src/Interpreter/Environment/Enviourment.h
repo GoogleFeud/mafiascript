@@ -37,21 +37,20 @@ class Enviourment {
         env->unsafeSet(key, val);
     };
 
-    void unsafeSet(std::string &key, MS_POINTER &val) {
+    void unsafeSet(std::string key, MS_POINTER &val) {
         this->values[key] = val;
     };
 
     void clear() {
         this->values.clear();
     }
-
+    
     size_t size() {
         return this->values.size();
     }
 
     ~Enviourment() {
         this->values.clear();
-        //delete this;
     }
 
     private:

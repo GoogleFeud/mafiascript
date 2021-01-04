@@ -19,7 +19,7 @@ Context* eval() {
         };
         return MS_VALUE::make();
     });
-    fnVal->isConst = true;
+    fnVal->flags.isConst = true;
     ctx->global->unsafeSet(fnName, fnVal);
     auto start = high_resolution_clock::now();
     ctx->run(code);

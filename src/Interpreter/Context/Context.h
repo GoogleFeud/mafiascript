@@ -7,10 +7,16 @@
 #include "../../Parser/index.h"
 #include "./util.h"
 
+void __initGlobal(Enviourment* env);
+
 class Context
 {
 public:
     Enviourment *global = new Enviourment();
+
+    Context() {
+        __initGlobal(global);
+    }
 
     void run(std::string &code)
     {
@@ -176,7 +182,7 @@ public:
             AST_Declare *declare = downcast<AST_Declare *>(node);
             auto val = this->executeAST(declare->value, env);
             auto passedValue = MS_VALUE::pass(val);
-            if (declare->isConst) passedValue->isConst = true;
+            if (declare->isConst) passedValue->flags.isConst = 1;
             env->define(declare->name, passedValue);
             return MS_VALUE::make();
         };
