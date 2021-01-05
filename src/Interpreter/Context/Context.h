@@ -13,20 +13,29 @@ class Context
 {
 public:
     Enviourment *global = new Enviourment();
+    AST_NODE* entry;
 
     Context() {
         __initGlobal(global);
     }
 
-    void run(std::string &code)
+    MS_POINTER run(std::string &code)
     {
-        this->executeAST(new AST_NODE{parseAST(code)}, this->global);
+        entry = new AST_NODE{parseAST(code)};
+        return this->executeAST(entry, this->global);
     };
 
-    void run(AST_Block *code)
+    MS_POINTER run(AST_Block *code)
     {
-        this->executeAST(new AST_NODE{code}, this->global);
+        entry = new AST_NODE{code};
+        return this->executeAST(entry, this->global);
     };
+
+    MS_POINTER repl(std::string &code) {
+        auto parsed = parseAST(code);
+        if (parsed->nodes.size() == 1) return this->executeAST(parsed->nodes[0], this->global);
+        else return run(parsed);
+    }
     
     MS_POINTER executeAST(AST_NODE *node, Enviourment *env)
     {
@@ -184,7 +193,7 @@ public:
             auto passedValue = MS_VALUE::pass(val);
             if (declare->isConst) passedValue->flags.isConst = 1;
             env->define(declare->name, passedValue);
-            return MS_VALUE::make();
+            return val;
         };
         case AST_Types::MS_IF:
         {
@@ -297,7 +306,8 @@ public:
 
     ~Context()
     {
-        delete this->global;
+        delete global;
+        delete entry;
     };
 
 };

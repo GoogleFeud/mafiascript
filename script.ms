@@ -60,11 +60,15 @@ const Map = (entries = []) => {
       return _size;
    };
 
+   map.actual = _inner;
+
    return map;
 };
 
-
-const main = (a, b) => {
-   const obj = {"a": "aaa"};
-   return obj.a.toNumber();
+const main = () => {
+const myArr = Array().fill(null, 50000000);
+print(myArr.size());
 };
+
+
+main();
