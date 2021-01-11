@@ -25,7 +25,7 @@ AST_Block* prog;
 %token STRING NUMBER ID BOOL _NULL 
 %token IF ELSE RETURN LOOP LET CONST CONTINUE TYPEOF
 %token PLUS MINUS TIMES DIVIDE POWER COMPARE NOT ASSIGN NOT_EQUAL OR AND GREATER_THAN GREATER_OR_EQUAL LESS_THAN LESS_OR_EQUAL MODULO INC DEC
-%token PARAN_LEFT PARAN_RIGHT COMMA BRACKET_LEFT BRACKET_RIGHT QUESTION_MARK DOUBLE_DOT S_BRACKET_LEFT S_BRACKET_RIGHT NEXT DOT
+%token PARAN_LEFT PARAN_RIGHT COMMA BRACKET_LEFT BRACKET_RIGHT QUESTION_MARK DOUBLE_DOT S_BRACKET_LEFT S_BRACKET_RIGHT NEXT DOT VERTICAL_LINE
 %token END_OF_LINE
 
 %left IF ELSE RETURN LOOP LET CONST CONTINUE TYPEOF
@@ -71,6 +71,7 @@ ExpressionList: %empty { $$ = new AST_List; };
 | Expression { $$ = new AST_List($1); };
 | And_Or { $$ = new AST_List($1); };
 | ExpressionList COMMA Expression { $$->push($3); };
+| ExpressionList COMMA And_Or { $$->push($3); };
 
 PairList: %empty {$$ = new AST_PairList; };
 | STRING DOUBLE_DOT Expression {$$ = new AST_PairList($1, $3); };
@@ -121,8 +122,10 @@ BRACKET_LEFT PairList BRACKET_RIGHT {$$ = new AST_NODE { new AST_Object($2) }; }
 Function:
 PARAN_LEFT VarList PARAN_RIGHT NEXT BRACKET_LEFT Block BRACKET_RIGHT { $$ = new AST_NODE { new AST_Function($2, $6) }; };
 | PARAN_LEFT VarList PARAN_RIGHT NEXT Expression { $$ = new AST_NODE { new AST_Function($2, $5) }; };
-| S_BRACKET_LEFT VarList S_BRACKET_RIGHT PARAN_LEFT VarList PARAN_RIGHT NEXT BRACKET_LEFT Block BRACKET_RIGHT { $$ = new AST_NODE { new AST_Function($5, $9, $2) }; };
-| S_BRACKET_LEFT VarList S_BRACKET_RIGHT PARAN_LEFT VarList PARAN_RIGHT NEXT Expression { $$ = new AST_NODE { new AST_Function($5, $8, $2) }; };
+| VERTICAL_LINE VarList VERTICAL_LINE PARAN_LEFT VarList PARAN_RIGHT NEXT BRACKET_LEFT Block BRACKET_RIGHT { $$ = new AST_NODE { new AST_Function($5, $9, $2) }; };
+| VERTICAL_LINE VarList VERTICAL_LINE PARAN_LEFT VarList PARAN_RIGHT NEXT Expression { $$ = new AST_NODE { new AST_Function($5, $8, $2) }; };
+| VERTICAL_LINE VarList VERTICAL_LINE NEXT BRACKET_LEFT Block BRACKET_RIGHT { $$ = new AST_NODE { new AST_Function(NULL, $6, $2) }; };
+| VERTICAL_LINE VarList VERTICAL_LINE NEXT Expression { $$ = new AST_NODE { new AST_Function(NULL, $5, $2) }; };
 
 Literal:
 NUMBER;
@@ -199,6 +202,7 @@ TYPEOF Expression { $$ = new AST_NODE { new AST_Typeof($2) }; };
 LoopBeforeInit:
 Define { $$ = $1; };
 | Expression { $$ = $1; };
+| And_Or {$$ = $1; };
 
 LoopAfterInit:
 Expression { $$ = $1; };

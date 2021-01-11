@@ -1,73 +1,52 @@
-
-
-const contains = (arr, value = 0) => {
-   const arrSize = arr.size();
-   loop (let i=0, i < arrSize, i++) {
-      if (arr[i] == value) return true;
+const merge = (arr1 = [], arr2 = []) => {
+   const new = [];
+   loop(arr1.size() && arr2.size()) {
+      if (arr1[0] < arr2[0]) {
+         new.push(arr1[0]);
+         arr1.delete(0);
+      } else {
+         new.push(arr2[0]);
+         arr2.delete(0);
+      };
    };
-   return false;
+   new.merge(arr1, arr2);
+   return new;
 };
 
-
-const Queue = () => {
-   const q = _arguments;   
-
-   q.enqueue = [q](val) => {
-      q.insert(val);
-      return q;
-   };
-
-   q.dequeue = [q]() => {
-      return q.pop();
-   };
-
-   return q;
+const mergeSort = (arr = []) => {
+   if (arr.size() < 2) return arr;
+   const middle = (arr.size() / 2).floor();
+   const arr1 = mergeSort(arr.slice(0, middle));
+   const arr2 = mergeSort(arr.slice(middle, arr.size()));
+   return merge(arr1, arr2);
 };
 
-const Map = (entries = []) => {
-   const map = {};
-   let _inner = {};
-   let _size = entries.size();
+const binarySearch = (arr, value, start = 0, end = arr.size()) => {
+   if (start > end) return false;
+   const mid = ((start + end) / 2).floor();
+   if (arr[mid] == value) return true;
+   
+   if (arr[mid] > value) return binarySearch(arr, value, start, mid - 1)
+   else return binarySearch(arr, value, mid + 1, end);
+};
 
-   entries.each([_inner](el) => {
-      _inner[el[0]] = el[1];
-   });
-
-   map.set = [_inner, _size](key, val) => {
-      _inner[key] = val;
-      _size++;
+const Person = (name, age) => {
+   const _ = {
+      "name": name,
+      "age": age
    };
 
-   map.get = [_inner](key) => {
-      return _inner[key];
+   _.isUnderage = |_|(minAge = 18) => {
+      if (_.age > minAge) return false;
+      return true;
    };
 
-   map.delete = [_inner, _size](key) => {
-      _inner[key] = null;
-      _size--;
-   };
-
-   map.has = [_inner](key) => {
-      return ((typeof _inner[key]) != "null");
-   };
-
-   map.clear = [_inner, _size]() => {
-      _inner = {};
-      _size = 0;
-   };
-
-   map.size = [_size]() => {
-      return _size;
-   };
-
-   map.actual = _inner;
-
-   return map;
+   return _;
 };
 
 const main = () => {
-const myArr = Array().fill(null, 50000000);
-print(myArr.size());
+const me = Person("Google", 18);
+print(me.isUnderage());
 };
 
 

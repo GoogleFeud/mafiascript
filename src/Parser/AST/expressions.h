@@ -106,10 +106,12 @@ class AST_Function {
     };
 
     AST_Function(AST_List *params, AST_NODE* body, AST_List *captures) {
+        if (params) {
         for (AST_NODE* node : params->entries) {
            this->params.push_back(downcast<AST_Var*>(node));
         };
         delete params;
+        }
         for (AST_NODE* node : captures->entries) {
            this->captures.push_back(downcast<AST_Var*>(node)->value);
         };

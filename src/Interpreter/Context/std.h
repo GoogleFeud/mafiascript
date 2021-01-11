@@ -84,6 +84,14 @@ void __initArray(MS_VALUE *arr) {
         };
         return MS_VALUE::make((float)val->entries.size());
     });
+    arr->properties["merge"] = MS_VALUE::make([val](std::vector<MS_POINTER> params) -> MS_POINTER {
+        for (MS_POINTER param : params) {
+            if (param->index() != MS_Types::T_ARRAY) continue;
+            auto arr = param->downcast<MS_Array>();
+            val->entries.insert(val->entries.end(), arr->entries.begin(), arr->entries.end());
+        }
+        return MS_VALUE::make();
+    });
     arr->properties["pop"] = MS_VALUE::make([val](std::vector<MS_POINTER> params) -> MS_POINTER {
         auto lastEl = val->entries[val->entries.size() - 1];
         val->entries.pop_back();

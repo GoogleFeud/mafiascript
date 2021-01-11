@@ -77,6 +77,7 @@ THEN "=>"
 "." return DOT;
 "++" return INC;
 "--" return DEC;
+"|" return VERTICAL_LINE;
 "//".*  {};
  
 ";" return END_OF_LINE;
